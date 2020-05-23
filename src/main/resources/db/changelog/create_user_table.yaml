@@ -1,0 +1,34 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: app_user
+            columns:
+              - column:
+                  name: login
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: email
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar
+                  constraints:
+                    nullable: false
