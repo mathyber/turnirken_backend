@@ -23,4 +23,8 @@ public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usr_sequence")
     Long id;
+
+    public String getUsername() {
+        return login;
+    }
 }
