@@ -5,5 +5,17 @@ class SecurityConstants {
     static final long EXPIRATION_TIME = 864_000_000; // 10 days
     static final String TOKEN_PREFIX = "Bearer ";
     static final String HEADER_STRING = "Authorization";
-    static final String SIGN_UP_URL = "/main/registration";
+    static final String[] AUTH_WHITELIST = {
+            // -- swagger ui
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/api/user/registration",
+            "/api/login"
+            // other public endpoints of your API may be appended to this array
+    };
 }

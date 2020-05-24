@@ -1,46 +1,56 @@
 package com.example.turnirken.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.example.turnirken.dto.CreateUserModel;
 import com.example.turnirken.entity.AppUser;
 import com.example.turnirken.repository.UserRepository;
+import org.json.simple.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Service
-public class MainService {
+public class UserService {
     private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public MainService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder ) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder ) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
-
+/*
     public String getGreeting() {
 
         return "mahmade!";
     }
-
+*/
     public AppUser create(CreateUserModel userModel) {
 
-        AppUser applicationAppUser = new AppUser();
+        AppUser appUser = new AppUser();
 
-        applicationAppUser.setLogin(userModel.getLogin());
-        applicationAppUser.setPassword(bCryptPasswordEncoder.encode(userModel.getPassword()));
-        applicationAppUser.setEmail(userModel.getEmail());
+        appUser.setLogin(userModel.getLogin());
+        appUser.setPassword(bCryptPasswordEncoder.encode(userModel.getPassword()));
+        appUser.setEmail(userModel.getEmail());
 
-        return userRepository.save(applicationAppUser);
+        return userRepository.save(appUser);
     }
 
     public String getUsername(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getName();//get logged in username
+    }
+
+    public JSONObject getUserinfo() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String login = auth.getName();
+        AppUser user = userRepository.findByLogin(login);
+        JSONObject userInfo = new JSONObject();
+        userInfo.put("id",user.getId());
+        userInfo.put("login",user.getLogin());
+        userInfo.put("email",user.getEmail());
+        return userInfo;
     }
 }
