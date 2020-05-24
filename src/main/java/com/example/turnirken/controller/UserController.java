@@ -1,10 +1,10 @@
 package com.example.turnirken.controller;
 
 import com.example.turnirken.dto.CreateUserModel;
+import com.example.turnirken.dto.LoginUserModel;
+import com.example.turnirken.dto.TestRegModel;
 import com.example.turnirken.entity.AppUser;
 import com.example.turnirken.service.UserService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +30,18 @@ class UserController {
     public AppUser create(@RequestBody CreateUserModel userModel) {
 
         return userService.create(userModel);
+    }
+
+    @PostMapping("registration/testLogin")
+    @ResponseStatus(HttpStatus.CREATED)
+    public boolean testLogin(@RequestBody TestRegModel userModel) {
+        return userService.testLogin(userModel);
+    }
+
+    @PostMapping("registration/testEmail")
+    @ResponseStatus(HttpStatus.CREATED)
+    public boolean testEmail(@RequestBody TestRegModel userModel) {
+        return userService.testEmail(userModel);
     }
 
     @GetMapping("/getUsername")

@@ -1,6 +1,7 @@
 package com.example.turnirken.service;
 
 import com.example.turnirken.dto.CreateUserModel;
+import com.example.turnirken.dto.TestRegModel;
 import com.example.turnirken.entity.AppUser;
 import com.example.turnirken.repository.UserRepository;
 import org.json.simple.JSONObject;
@@ -52,5 +53,13 @@ public class UserService {
         userInfo.put("login",user.getLogin());
         userInfo.put("email",user.getEmail());
         return userInfo;
+    }
+
+    public boolean testLogin(TestRegModel userModel) {
+        return userRepository.findByLogin(userModel.getStr())!=null;
+    }
+
+    public boolean testEmail(TestRegModel userModel) {
+        return userRepository.findByEmail(userModel.getStr())!=null;
     }
 }

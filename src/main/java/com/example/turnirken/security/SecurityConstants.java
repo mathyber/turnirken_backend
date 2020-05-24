@@ -15,6 +15,8 @@ class SecurityConstants {
             "/swagger-ui.html",
             "/webjars/**",
             "/api/user/registration",
+            "/api/user/registration/testLogin",
+            "/api/user/registration/testEmail",
             "/api/login"
             // other public endpoints of your API may be appended to this array
     };

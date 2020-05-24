@@ -5,4 +5,5 @@ import com.example.turnirken.entity.AppUser;
 
 public interface UserRepository extends JpaRepository<AppUser, Long> {
     AppUser findByLogin(String login);
+    AppUser findByEmail(String email);
 }
