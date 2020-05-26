@@ -1,5 +1,6 @@
 package com.example.turnirken.security;
 
+import com.example.turnirken.repository.UserRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -29,22 +30,26 @@ import static com.example.turnirken.security.SecurityConstants.AUTH_WHITELIST;
 public class WebSecurity extends WebSecurityConfigurerAdapter {
     private UserDetailsServiceImpl userDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private UserRepository jopa;
 
     public WebSecurity(UserDetailsServiceImpl userDetailsService,
-                       BCryptPasswordEncoder bCryptPasswordEncoder
+                       BCryptPasswordEncoder bCryptPasswordEncoder,
+                       UserRepository jopa
     ) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jopa = jopa;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
+                .antMatchers("/api/admin").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(),jopa))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

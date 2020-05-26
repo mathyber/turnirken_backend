@@ -6,11 +6,12 @@ import com.example.turnirken.entity.AppUser;
 import com.example.turnirken.repository.UserRepository;
 import org.json.simple.JSONObject;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Collection;
 
 @Service
 public class UserService {
@@ -35,7 +36,7 @@ public class UserService {
         appUser.setLogin(userModel.getLogin());
         appUser.setPassword(bCryptPasswordEncoder.encode(userModel.getPassword()));
         appUser.setEmail(userModel.getEmail());
-
+        appUser.setRole("ROLE_USER");
         return userRepository.save(appUser);
     }
 
@@ -52,6 +53,7 @@ public class UserService {
         userInfo.put("id",user.getId());
         userInfo.put("login",user.getLogin());
         userInfo.put("email",user.getEmail());
+        userInfo.put("role",user.getRole());
         return userInfo;
     }
 
@@ -61,5 +63,10 @@ public class UserService {
 
     public boolean testEmail(TestRegModel userModel) {
         return userRepository.findByEmail(userModel.getStr())!=null;
+    }
+
+    public Collection<? extends GrantedAuthority> getUserrole() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getAuthorities();
     }
 }

@@ -16,6 +16,9 @@ public class AppUser {
     @Column(name = "email")
     String email;
 
+    @Column(name = "role")
+    String role;
+
     @Column(name = "password")
     String password;
 

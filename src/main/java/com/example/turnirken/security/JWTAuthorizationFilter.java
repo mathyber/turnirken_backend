@@ -2,11 +2,16 @@ package com.example.turnirken.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.turnirken.entity.AppUser;
+import com.example.turnirken.repository.UserRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -14,16 +19,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-import static com.example.turnirken.security.SecurityConstants.HEADER_STRING;
-import static com.example.turnirken.security.SecurityConstants.SECRET;
-import static com.example.turnirken.security.SecurityConstants.TOKEN_PREFIX;
+import static com.example.turnirken.security.SecurityConstants.*;
+
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    JWTAuthorizationFilter(AuthenticationManager authManager) {
+    UserRepository rep;
+
+    JWTAuthorizationFilter(AuthenticationManager authManager, UserRepository rep ) {
         super(authManager);
+        this.rep = rep;
+
     }
+
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest req,
@@ -51,8 +62,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                     .verify(token.replace(TOKEN_PREFIX, ""))
                     .getSubject();
 
+
+            List<GrantedAuthority> roles = new ArrayList<>();
+
+            AppUser userr = rep.findByLogin(user);
+            roles.add(new SimpleGrantedAuthority(userr.getRole()));
+
             if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(user, null, roles);
             }
             return null;
         }
