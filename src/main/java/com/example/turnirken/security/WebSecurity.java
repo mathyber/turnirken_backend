@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.example.turnirken.service.UserDetailsServiceImpl;
 
-import static com.example.turnirken.security.SecurityConstants.AUTH_WHITELIST;
+import static com.example.turnirken.security.SecurityConstants.*;
 
 @Configuration
 @EnableWebSecurity
@@ -40,18 +40,18 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/api/admin").hasAnyRole("ADMIN")
+                .antMatchers(ADMIN_LIST).hasAnyRole("ADMIN")
+                .antMatchers(MODERATOR_LIST).hasAnyRole("ADMIN","MODERATOR")
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(),userRepository,userRoleRepository))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(),userRepository))
-                // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        ;auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Bean

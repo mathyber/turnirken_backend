@@ -30,18 +30,15 @@ class UserController {
     @PostMapping("registration")
     @ResponseStatus(HttpStatus.CREATED)
     public AppUser create(@RequestBody CreateUserModel userModel) {
-
         return userService.create(userModel);
     }
 
     @PostMapping("registration/testLogin")
-    @ResponseStatus(HttpStatus.CREATED)
     public boolean testLogin(@RequestBody TestRegModel userModel) {
         return userService.testLogin(userModel);
     }
 
     @PostMapping("registration/testEmail")
-    @ResponseStatus(HttpStatus.CREATED)
     public boolean testEmail(@RequestBody TestRegModel userModel) {
         return userService.testEmail(userModel);
     }
@@ -54,7 +51,7 @@ class UserController {
 
     @GetMapping("/getUserroles")
     //  @RequestMapping(value="/login", method = RequestMethod.GET)
-    public Collection<? extends GrantedAuthority> getUsernam() {
+    public Collection<? extends GrantedAuthority> getUserroles() {
         return userService.getUserrole();
     }
 

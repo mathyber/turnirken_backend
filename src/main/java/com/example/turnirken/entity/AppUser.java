@@ -13,13 +13,13 @@ import java.util.Set;
 @Table(name = "app_user")
 public class AppUser {
     @Column(name = "login")
-    String login;
+    private String login;
 
     @Column(name = "email")
-    String email;
+    private String email;
 
     @Column(name = "password")
-    String password;
+    private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(	name = "user_roles",

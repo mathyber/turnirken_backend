@@ -1,0 +1,33 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: games
+            columns:
+              - column:
+                  name: name
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: info
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: on_display
+                  type: bool
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false

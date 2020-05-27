@@ -20,4 +20,14 @@ class SecurityConstants {
             "/api/login"
             // other public endpoints of your API may be appended to this array
     };
+
+    static final String[] MODERATOR_LIST = {
+            "/api/games/moderator/createOnDisplayGame",
+            "/api/games/moderator/setOnDisplayGame",
+    };
+
+    static final String[] ADMIN_LIST = {
+            "/api/games/moderator/createOnDisplayGame",
+            "/api/games/moderator/setOnDisplayGame",
+    };
 }
