@@ -1,16 +1,21 @@
 package com.example.turnirken.security;
 
 import com.auth0.jwt.JWT;
+import com.example.turnirken.entity.AppUser;
+import com.example.turnirken.entity.Role;
+import com.example.turnirken.entity.UserRole;
+import com.example.turnirken.repository.UserRepository;
+import com.example.turnirken.repository.UserRoleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.example.turnirken.entity.AppUser;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -18,17 +23,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.example.turnirken.security.SecurityConstants.*;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
+    UserRepository rep;
+    UserRoleRepository urr;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, UserRepository rep, UserRoleRepository urr) {
         this.authenticationManager = authenticationManager;
+        this.rep = rep;
+        this.urr = urr;
         setFilterProcessesUrl("/api/login");
     }
 
@@ -39,11 +47,21 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             AppUser creds = new ObjectMapper()
                     .readValue(req.getInputStream(), AppUser.class);
 
+            List<GrantedAuthority> roles = new ArrayList<>();
+
+         //   AppUser userr = rep.findByLogin(creds.getLogin());
+            List<UserRole> r = urr.findByAppUser_Login(creds.getLogin());
+     //
+            r.forEach(userrole -> roles.add(new SimpleGrantedAuthority(userrole.getRole().getName().name())));
+          //  Set<GrantedAuthority> roles = new HashSet<>();
+
+           // creds.getRoles().forEach(role -> roles.add(new SimpleGrantedAuthority(role.getName().name())));
+           // System.out.println(creds.getLogin()+ "             --------   " + r.get(0).getRole().getName().name());
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             creds.getLogin(),
                             creds.getPassword(),
-                            new ArrayList<>())
+                            roles)
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

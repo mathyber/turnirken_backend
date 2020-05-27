@@ -21,9 +21,6 @@ databaseChangeLog:
                     nullable: false
                     unique: true
               - column:
-                  name: role
-                  type: varchar(30)
-              - column:
                   name: id
                   type: bigint
                   autoIncrement: true

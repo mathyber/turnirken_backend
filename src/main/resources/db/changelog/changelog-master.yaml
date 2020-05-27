@@ -3,4 +3,8 @@ databaseChangeLog:
   - include:
       file: db/changelog/create_user_table.yaml
   - include:
+      file: db/changelog/create_role_table.yaml
+  - include:
+      file: db/changelog/create_userrole_table.yaml
+  - include:
       file: db/changelog/usr_sequence.yaml

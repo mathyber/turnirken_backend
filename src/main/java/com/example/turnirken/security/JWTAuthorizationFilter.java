@@ -3,6 +3,7 @@ package com.example.turnirken.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.turnirken.entity.AppUser;
+import com.example.turnirken.entity.Role;
 import com.example.turnirken.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static com.example.turnirken.security.SecurityConstants.*;
 
@@ -31,7 +33,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     JWTAuthorizationFilter(AuthenticationManager authManager, UserRepository rep ) {
         super(authManager);
         this.rep = rep;
-
     }
 
 
@@ -66,7 +67,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             List<GrantedAuthority> roles = new ArrayList<>();
 
             AppUser userr = rep.findByLogin(user);
-            roles.add(new SimpleGrantedAuthority(userr.getRole()));
+            Set<Role> r = userr.getRoles();
+            r.forEach(role -> roles.add(new SimpleGrantedAuthority(role.getName().name())));
 
             if (user != null) {
                 return new UsernamePasswordAuthenticationToken(user, null, roles);

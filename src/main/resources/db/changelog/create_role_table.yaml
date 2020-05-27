@@ -1,0 +1,51 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: app_roles
+            columns:
+              - column:
+                  name: name
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+  - changeSet:
+      id: 2
+      author: mathyber
+      comment: "Create roles"
+      changes:
+        - insert:
+            tableName: app_roles
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_ADMIN"
+        - insert:
+            tableName: app_roles
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_MODERATOR"
+        - insert:
+            tableName: app_roles
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_USER"
+      rollback:
+        - delete:
+            tableName: app_roles
+            where: name in ('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_USER')
