@@ -20,13 +20,6 @@ class UserController {
         this.userService = userService;
     }
 
-    //@RequestMapping(method = RequestMethod.GET, value = "/greeting")
-  //  @GetMapping("greeting")
-   // public String getGreeting() {
-  //      return mainService.getGreeting();
-  //  }
-
-   // @RequestMapping(method = RequestMethod.POST, value = "/registration")
     @PostMapping("registration")
     @ResponseStatus(HttpStatus.CREATED)
     public AppUser create(@RequestBody CreateUserModel userModel) {
@@ -44,19 +37,16 @@ class UserController {
     }
 
     @GetMapping("/getUsername")
-  //  @RequestMapping(value="/login", method = RequestMethod.GET)
     public String getUsername() {
         return userService.getUsername();
     }
 
     @GetMapping("/getUserroles")
-    //  @RequestMapping(value="/login", method = RequestMethod.GET)
     public Collection<? extends GrantedAuthority> getUserroles() {
         return userService.getUserrole();
     }
 
     @GetMapping("/getUserinfo")
-    //  @RequestMapping(value="/login", method = RequestMethod.GET)
     public JSONObject getUserinfo() {
         return userService.getUserinfo();
     }
