@@ -1,6 +1,7 @@
 package com.example.turnirken.service;
 
 import com.example.turnirken.dto.CreateUserModel;
+import com.example.turnirken.dto.RoleModel;
 import com.example.turnirken.dto.TestRegModel;
 import com.example.turnirken.entity.AppUser;
 import com.example.turnirken.entity.Role;
@@ -10,12 +11,14 @@ import com.example.turnirken.repository.UserRepository;
 import org.json.simple.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -79,5 +82,14 @@ public class UserService {
     public Collection<? extends GrantedAuthority> getUserrole() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getAuthorities();
+    }
+
+    public AppUser setRole(RoleModel model) {
+        AppUser user = userRepository.findByLogin(model.getLogin());
+        Set<Role> roles = user.getRoles();
+        Optional<Role> role = roleRepository.findByName(UserRoleEnum.valueOf(model.getRole()));
+        roles.add(role.get());
+        user.setRoles(roles);
+        return userRepository.save(user);
     }
 }

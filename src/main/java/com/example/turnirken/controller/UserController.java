@@ -1,6 +1,7 @@
 package com.example.turnirken.controller;
 
 import com.example.turnirken.dto.CreateUserModel;
+import com.example.turnirken.dto.RoleModel;
 import com.example.turnirken.dto.TestRegModel;
 import com.example.turnirken.entity.AppUser;
 import com.example.turnirken.service.UserService;
@@ -34,6 +35,11 @@ class UserController {
     @PostMapping("registration/testEmail")
     public boolean testEmail(@RequestBody TestRegModel userModel) {
         return userService.testEmail(userModel);
+    }
+
+    @PostMapping("/setRole")
+    public AppUser setRole(@RequestBody RoleModel model) {
+        return userService.setRole(model);
     }
 
     @GetMapping("/getUsername")

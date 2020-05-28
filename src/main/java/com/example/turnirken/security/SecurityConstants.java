@@ -29,5 +29,6 @@ class SecurityConstants {
     static final String[] ADMIN_LIST = {
             "/api/games/moderator/createOnDisplayGame",
             "/api/games/moderator/setOnDisplayGame",
+            "/api/user/setRole",
     };
 }
