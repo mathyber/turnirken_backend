@@ -1,0 +1,48 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: tournament_groups
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: tournament_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: number_of_players
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: number_of_players_playoff
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: points_for_victory
+                  type: bigint
+                  constraints:
+                    nullable:
+              - column:
+                  name: points_for_draw
+                  type: bigint
+                  constraints:
+                    nullable: true

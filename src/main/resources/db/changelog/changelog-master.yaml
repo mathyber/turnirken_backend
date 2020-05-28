@@ -1,5 +1,16 @@
 databaseChangeLog:
-  -
+  - include:
+      file: db/changelog/create_match_table.yaml
+  - include:
+      file: db/changelog/create_result_table.yaml
+  - include:
+      file: db/changelog/create_playoff_table.yaml
+  - include:
+      file: db/changelog/create_grouppart_table.yaml
+  - include:
+      file: db/changelog/create_round_table.yaml
+  - include:
+      file: db/changelog/create_tourpart_table.yaml
   - include:
       file: db/changelog/create_tourname_table.yaml
   - include:
@@ -10,6 +21,10 @@ databaseChangeLog:
       file: db/changelog/create_userrole_table.yaml
   - include:
       file: db/changelog/create_game_table.yaml
+  - include:
+      file: db/changelog/create_group_table.yaml
+  - include:
+      file: db/changelog/create_stage_table.yaml
   - include:
       file: db/changelog/create_toursystem_table.yaml
   - include:

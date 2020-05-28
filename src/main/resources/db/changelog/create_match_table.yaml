@@ -1,0 +1,52 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: matches
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: game_over
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: round_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: playoff_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: player1
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: player2
+                  type: bigint
+                  constraints:
+                    nullable:
+              - column:
+                  name: next_match_for_w
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: next_match_for_l
+                  type: bigint
+                  constraints:
+                    nullable: true

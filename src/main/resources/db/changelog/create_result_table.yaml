@@ -1,0 +1,47 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: match_results
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: player_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: match_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: datetime
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: result_of_player1
+                  type: bigint
+                  constraints:
+                    nullable:
+              - column:
+                  name: result_of_player2
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: info
+                  type: varchar
+                  constraints:
+                    nullable: true

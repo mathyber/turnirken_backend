@@ -1,0 +1,27 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: playoffs
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tournament_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: stage_id
+                  type: bigint
+                  constraints:
+                    nullable: true

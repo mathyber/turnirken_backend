@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -64,4 +66,7 @@ public class Tournament {
 
     @Column(name = "logo")
     private String logo;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "id")
+    private Set<TournamentGroup> groups;
 }
