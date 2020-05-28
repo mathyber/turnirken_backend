@@ -1,0 +1,92 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: tournament_names
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: season
+                  type: varchar(45)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: organizer_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tournament_system_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: date_start_reg
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: date_finish_reg
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: date_start
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: date_finish
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: max_participants
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: games_num
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: num_to_win
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: only_admin_result
+                  type: boolean
+                  constraints:
+                    nullable: true
+              - column:
+                  name: status
+                  type: boolean
+                  constraints:
+                    nullable: true
+              - column:
+                  name: info
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: logo
+                  type: text
+                  constraints:
+                    nullable: true
