@@ -6,7 +6,7 @@ databaseChangeLog:
       changes:
 
         - createTable:
-            tableName: tournament_names
+            tableName: tournaments
             columns:
               - column:
                   name: id
