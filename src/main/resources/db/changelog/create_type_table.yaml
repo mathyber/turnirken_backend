@@ -1,0 +1,57 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: next_types
+            columns:
+              - column:
+                  name: name
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+  - changeSet:
+      id: 2
+      author: mathyber
+      comment: "Create types"
+      changes:
+        - insert:
+            tableName: next_types
+            columns:
+              - column:
+                  name: name
+                  value: "group"
+        - insert:
+            tableName: next_types
+            columns:
+              - column:
+                  name: name
+                  value: "match"
+        - insert:
+            tableName: next_types
+            columns:
+              - column:
+                  name: name
+                  value: "result"
+        - insert:
+            tableName: next_types
+            columns:
+              - column:
+                  name: name
+                  value: "user"
+      rollback:
+        - delete:
+            tableName: next_types
+            where: name in ('group', 'match', 'result','user')

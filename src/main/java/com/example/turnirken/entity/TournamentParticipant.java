@@ -21,7 +21,10 @@ public class TournamentParticipant {
     private Tournament tournament;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private AppUser user;
+
+    @Column(name = "name_in_tournament")
+    private String nameInTournament;
 
 }

@@ -25,3 +25,8 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: true
+              - column:
+                  name: name_in_tournament
+                  type: varchar(45)
+                  constraints:
+                    nullable: true

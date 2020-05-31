@@ -17,29 +17,29 @@ public class Match {
     Long id;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "round_id", nullable = false)
+    @JoinColumn(name = "round_id")
     private Round round;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "playoff_id", nullable = false)
+    @JoinColumn(name = "playoff_id")
     private Playoff playoff;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "player1", nullable = false)
+    @JoinColumn(name = "player1")
     private TournamentParticipant player1;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "player2", nullable = false)
+    @JoinColumn(name = "player2")
     private TournamentParticipant player2;
 
     @Column(name = "game_over")
     private boolean gameOverFlag;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "next_match_for_w", nullable = false)
+    @JoinColumn(name = "next_match_for_w")
     private Match nextForW;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "next_match_for_l", nullable = false)
+    @JoinColumn(name = "next_match_for_l")
     private Match nextForL;
 }

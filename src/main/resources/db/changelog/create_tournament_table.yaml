@@ -90,3 +90,8 @@ databaseChangeLog:
                   type: text
                   constraints:
                     nullable: true
+              - column:
+                  name: grid
+                  type: text
+                  constraints:
+                    nullable: true

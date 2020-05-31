@@ -1,0 +1,42 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: mathyber
+      changes:
+
+        - createTable:
+            tableName: next
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: this_type
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: this_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: place
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: next_type
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_next
+                  type: int
+                  constraints:
+                    nullable: false
