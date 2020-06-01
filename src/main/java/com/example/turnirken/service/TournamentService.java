@@ -2,6 +2,7 @@ package com.example.turnirken.service;
 
 import com.example.turnirken.dto.CreateEntityModel;
 import com.example.turnirken.dto.CreateTournamentModel;
+import com.example.turnirken.dto.GetParticipantsModel;
 import com.example.turnirken.dto.SaveTourGridModel;
 import com.example.turnirken.entity.*;
 import com.example.turnirken.repository.*;
@@ -13,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class TournamentService {
@@ -29,7 +31,7 @@ public class TournamentService {
     private PlayoffRepository playoffRepository;
     private GroupService groupService;
 
-    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentSystemRepository tournamentSystemRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService){
+    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentSystemRepository tournamentSystemRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService) {
         this.tournamentRepository = tournamentRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
@@ -54,7 +56,7 @@ public class TournamentService {
         name.setCreator(user);
 
         Game game = gameRepository.findByName(model.getGame());
-        if(game == null) {
+        if (game == null) {
             Game game1 = new Game();
             game1.setName(model.getGame());
             game1.setOnDisplay(false);
@@ -62,7 +64,7 @@ public class TournamentService {
             gameRepository.save(game1);
             name.setGame(game1);
         } else
-        name.setGame(game);
+            name.setGame(game);
 
         Tournament t = new Tournament();
         t.setTournamentName(name);
@@ -88,10 +90,37 @@ public class TournamentService {
         return tournamentRepository.findAll();
     }
 
-    public void gridSave(SaveTourGridModel model){
+    public boolean tournamentGrid(int id){
+        Tournament tournament = tournamentRepository.findById((long)id ).get();
+        if (tournament.getGrid()==null) return true;
+        else return false;
+    }
 
-      //  try {
-          //  JSONObject json =
+    public boolean tournamentParticipant(int id){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String login = auth.getName();
+        AppUser user = userRepository.findByLogin(login);
+
+      //  Tournament tournament = tournamentRepository.findById((long)id ).get();
+
+            Set<TournamentParticipant> tp = tournamentParticipantRepository.findByTournament_Id((long)id);
+            AtomicInteger i= new AtomicInteger();
+            try{
+            tp.forEach(tournamentParticipant -> {
+                if (tournamentParticipant.getUser().getId().equals(user.getId())) i.set(1);
+            });} catch (Exception e){
+                return true;
+            }
+
+            if (i.get() == 0) return true;
+            else return false;
+        }
+
+
+    public void gridSave(SaveTourGridModel model) {
+
+        //  try {
+        //  JSONObject json =
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String login = auth.getName();
         AppUser user = userRepository.findByLogin(login);
@@ -104,14 +133,14 @@ public class TournamentService {
         Set<CreateEntityModel> cem = new HashSet<>();
 
         model.getUsers().forEach(gridElemementModel -> {
-             TournamentParticipant tp = new TournamentParticipant();
-             tp.setTournament(tournament);
-             tp.setNameInTournament(gridElemementModel.getName());
-             CreateEntityModel crmod = new CreateEntityModel();
-             crmod.setId(tournamentParticipantRepository.save(tp).getId());
-             crmod.setType(nextTypeRepository.findByName("user"));
-             crmod.setIdFromModel(gridElemementModel.getId());
-             cem.add(crmod);
+            TournamentParticipant tp = new TournamentParticipant();
+            tp.setTournament(tournament);
+            tp.setNameInTournament(gridElemementModel.getName());
+            CreateEntityModel crmod = new CreateEntityModel();
+            crmod.setId(tournamentParticipantRepository.save(tp).getId());
+            crmod.setType(nextTypeRepository.findByName("user"));
+            crmod.setIdFromModel(gridElemementModel.getId());
+            cem.add(crmod);
         });
 
         model.getGroups().forEach(gridElemementModel -> {
@@ -133,18 +162,17 @@ public class TournamentService {
             playoff.setTournament(tournament);
 
             Stage stage = new Stage();
-            if (stageRepository.findByName(gridElemementModel.getStage())==null){
+            if (stageRepository.findByName(gridElemementModel.getStage()) == null) {
                 System.out.println("AAAAAAAAAAAAAAAAAA A");
                 stage.setName(gridElemementModel.getStage());
                 stageRepository.save(stage);
-            }
-            else{
+            } else {
                 stage = stageRepository.findByName(gridElemementModel.getStage());
             }
             playoff.setStage(stage);
             playoffRepository.save(playoff);
             m.setPlayoff(playoff);
-          //  m.setTournament(tournament);
+            //  m.setTournament(tournament);
             CreateEntityModel crmod = new CreateEntityModel();
             crmod.setId(matchRepository.save(m).getId());
             crmod.setType(nextTypeRepository.findByName("match"));
@@ -156,11 +184,12 @@ public class TournamentService {
 
             CreateEntityModel crmod = new CreateEntityModel();
 
-            int i=0;
-            if(!gridElemementModel.getPlace().equals("Победитель турнира")) i = Integer.parseInt(gridElemementModel.getPlace());
-            else i=1;
+            int i = 0;
+            if (!gridElemementModel.getPlace().equals("Победитель турнира"))
+                i = Integer.parseInt(gridElemementModel.getPlace());
+            else i = 1;
 
-            crmod.setId((long)i);
+            crmod.setId((long) i);
             crmod.setType(nextTypeRepository.findByName("result"));
             crmod.setIdFromModel(gridElemementModel.getId());
             cem.add(crmod);
@@ -170,58 +199,60 @@ public class TournamentService {
 
             final int[] i = new int[1];
             cem.forEach(createEntityModel -> {
-                if(createEntityModel.getIdFromModel()==gridElemementModel.getId())
+                if (createEntityModel.getIdFromModel() == gridElemementModel.getId())
                 //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
                 {
                     i[0] = createEntityModel.getId().intValue();
                 }
             });
 
-            if(gridElemementModel.getLinksout().size()>0) gridElemementModel.getLinksout().forEach(gridElementLinkModel -> {
-                Next next = new Next();
-                next.setIdThis(i[0]);
-                next.setThisType(nextTypeRepository.findByName("group"));
-                next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
+            if (gridElemementModel.getLinksout().size() > 0)
+                gridElemementModel.getLinksout().forEach(gridElementLinkModel -> {
+                    Next next = new Next();
+                    next.setIdThis(i[0]);
+                    next.setThisType(nextTypeRepository.findByName("group"));
+                    next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
 
-                cem.forEach(createEntityModel -> {
-                    if(createEntityModel.getIdFromModel()==gridElementLinkModel.getId())
-                    //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
-                    {
-                        next.setIdNext(createEntityModel.getId().intValue());
-                    }
+                    cem.forEach(createEntityModel -> {
+                        if (createEntityModel.getIdFromModel() == gridElementLinkModel.getId())
+                        //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
+                        {
+                            next.setIdNext(createEntityModel.getId().intValue());
+                        }
+                    });
+                    next.setPlace(gridElementLinkModel.getPlace());
+                    nextRepository.save(next);
                 });
-                next.setPlace(gridElementLinkModel.getPlace());
-                nextRepository.save(next);
-            });
         });
 
         model.getMatches().forEach(gridElemementModel -> {
 
             final int[] i = new int[1];
             cem.forEach(createEntityModel -> {
-                if(createEntityModel.getIdFromModel()==gridElemementModel.getId())
+                if (createEntityModel.getIdFromModel() == gridElemementModel.getId())
                 //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
                 {
                     i[0] = createEntityModel.getId().intValue();
                 }
             });
 
-            if(gridElemementModel.getLinksout().size()>0) gridElemementModel.getLinksout().forEach(gridElementLinkModel -> {
-                Next next = new Next();
-                next.setIdThis(i[0]);
-                next.setThisType(nextTypeRepository.findByName("match"));
-                next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
+            if (gridElemementModel.getLinksout().size() > 0)
+                gridElemementModel.getLinksout().forEach(gridElementLinkModel -> {
+                    Next next = new Next();
+                    next.setIdThis(i[0]);
+                    next.setThisType(nextTypeRepository.findByName("match"));
+                    next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
 
-                cem.forEach(createEntityModel -> {
-                    if(createEntityModel.getIdFromModel()==gridElementLinkModel.getId())
-                    //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
-                    {
-                        next.setIdNext(createEntityModel.getId().intValue());
-                    }
+                    cem.forEach(createEntityModel -> {
+                        if (createEntityModel.getIdFromModel() == gridElementLinkModel.getId())
+                        //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
+                        {
+                            next.setIdNext(createEntityModel.getId().intValue());
+                        }
+                    });
+                    next.setPlace(gridElementLinkModel.getPlace());
+                    nextRepository.save(next);
                 });
-                next.setPlace(gridElementLinkModel.getPlace());
-                nextRepository.save(next);
-            });
         });
 
 
@@ -229,29 +260,30 @@ public class TournamentService {
 
             final int[] i = new int[1];
             cem.forEach(createEntityModel -> {
-                if(createEntityModel.getIdFromModel()==gridElemementModel.getId())
+                if (createEntityModel.getIdFromModel() == gridElemementModel.getId())
                 //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
                 {
                     i[0] = createEntityModel.getId().intValue();
                 }
             });
 
-            if(gridElemementModel.getLinksout().size()>0) gridElemementModel.getLinksout().forEach(gridElementLinkModel -> {
-                Next next = new Next();
-                next.setIdThis(i[0]);
-                next.setThisType(nextTypeRepository.findByName("user"));
-                next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
+            if (gridElemementModel.getLinksout().size() > 0)
+                gridElemementModel.getLinksout().forEach(gridElementLinkModel -> {
+                    Next next = new Next();
+                    next.setIdThis(i[0]);
+                    next.setThisType(nextTypeRepository.findByName("user"));
+                    next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
 
-                cem.forEach(createEntityModel -> {
-                    if(createEntityModel.getIdFromModel()==gridElementLinkModel.getId())
-                    //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
-                    {
-                        next.setIdNext(createEntityModel.getId().intValue());
-                    }
+                    cem.forEach(createEntityModel -> {
+                        if (createEntityModel.getIdFromModel() == gridElementLinkModel.getId())
+                        //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
+                        {
+                            next.setIdNext(createEntityModel.getId().intValue());
+                        }
+                    });
+                    // next.setPlace(gridElementLinkModel.getPlace());
+                    nextRepository.save(next);
                 });
-               // next.setPlace(gridElementLinkModel.getPlace());
-                nextRepository.save(next);
-            });
         });
 
 
@@ -266,5 +298,36 @@ public class TournamentService {
 
     public Optional<Tournament> getTourId(Long Id) {
         return tournamentRepository.findById(Id);
+    }
+
+    public void createParticipate(int id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String login = auth.getName();
+        AppUser user = userRepository.findByLogin(login);
+
+        //  Tournament tour = tournamentRepository.findById((long) id).get();
+
+        Set<TournamentParticipant> tps = tournamentParticipantRepository.findByTournament_Id((long) id);
+
+        tps.forEach(tournamentParticipant -> {
+            if (tournamentParticipant.getUser() == null) {
+                tournamentParticipant.setUser(user);
+                tournamentParticipantRepository.save(tournamentParticipant);
+            }
+        });
+    }
+
+    public Set<GetParticipantsModel> getParticipants(int id) {
+        Set<TournamentParticipant> tps = tournamentParticipantRepository.findByTournament_Id((long) id);
+        Set<GetParticipantsModel> models = new HashSet<>();
+
+        tps.forEach(tournamentParticipant -> {
+            GetParticipantsModel model = new GetParticipantsModel();
+            model.setId(tournamentParticipant.getId());
+            model.setUser_id(tournamentParticipant.getUser().getId());
+            model.setLogin(tournamentParticipant.getUser().getLogin());
+            models.add(model);
+        });
+        return models;
     }
 }
