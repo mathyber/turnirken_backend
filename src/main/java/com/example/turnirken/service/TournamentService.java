@@ -1,19 +1,13 @@
 package com.example.turnirken.service;
 
-import com.example.turnirken.dto.CreateEntityModel;
-import com.example.turnirken.dto.CreateTournamentModel;
-import com.example.turnirken.dto.GetParticipantsModel;
-import com.example.turnirken.dto.SaveTourGridModel;
+import com.example.turnirken.dto.*;
 import com.example.turnirken.entity.*;
 import com.example.turnirken.repository.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -30,8 +24,9 @@ public class TournamentService {
     private StageRepository stageRepository;
     private PlayoffRepository playoffRepository;
     private GroupService groupService;
+    private GroupParticipantRepository groupParticipantRepository;
 
-    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentSystemRepository tournamentSystemRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService) {
+    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentSystemRepository tournamentSystemRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService, GroupParticipantRepository groupParticipantRepository) {
         this.tournamentRepository = tournamentRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
@@ -44,6 +39,7 @@ public class TournamentService {
         this.stageRepository = stageRepository;
         this.playoffRepository = playoffRepository;
         this.groupService = groupService;
+        this.groupParticipantRepository = groupParticipantRepository;
     }
 
     public Tournament create(CreateTournamentModel model) {
@@ -105,15 +101,13 @@ public class TournamentService {
 
             Set<TournamentParticipant> tp = tournamentParticipantRepository.findByTournament_Id((long)id);
             AtomicInteger i= new AtomicInteger();
-            try{
-            tp.forEach(tournamentParticipant -> {
-                if (tournamentParticipant.getUser().getId().equals(user.getId())) i.set(1);
-            });} catch (Exception e){
-                return true;
-            }
 
-            if (i.get() == 0) return true;
-            else return false;
+        for(TournamentParticipant tournamentParticipant : tp){
+            if(tournamentParticipant.getUser()!=null)
+                if (tournamentParticipant.getUser().getId().equals(user.getId())) i.set(1);
+        }
+
+        return i.get() == 0;
         }
 
 
@@ -199,7 +193,7 @@ public class TournamentService {
 
             final int[] i = new int[1];
             cem.forEach(createEntityModel -> {
-                if (createEntityModel.getIdFromModel() == gridElemementModel.getId())
+                if (createEntityModel.getIdFromModel().equals(gridElemementModel.getId()))
                 //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
                 {
                     i[0] = createEntityModel.getId().intValue();
@@ -212,9 +206,10 @@ public class TournamentService {
                     next.setIdThis(i[0]);
                     next.setThisType(nextTypeRepository.findByName("group"));
                     next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
+                     
 
                     cem.forEach(createEntityModel -> {
-                        if (createEntityModel.getIdFromModel() == gridElementLinkModel.getId())
+                        if (createEntityModel.getIdFromModel().equals(gridElementLinkModel.getId()))
                         //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
                         {
                             next.setIdNext(createEntityModel.getId().intValue());
@@ -229,7 +224,7 @@ public class TournamentService {
 
             final int[] i = new int[1];
             cem.forEach(createEntityModel -> {
-                if (createEntityModel.getIdFromModel() == gridElemementModel.getId())
+                if (createEntityModel.getIdFromModel().equals(gridElemementModel.getId()))
                 //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
                 {
                     i[0] = createEntityModel.getId().intValue();
@@ -244,7 +239,7 @@ public class TournamentService {
                     next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
 
                     cem.forEach(createEntityModel -> {
-                        if (createEntityModel.getIdFromModel() == gridElementLinkModel.getId())
+                        if (createEntityModel.getIdFromModel().equals(gridElementLinkModel.getId()))
                         //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
                         {
                             next.setIdNext(createEntityModel.getId().intValue());
@@ -275,7 +270,7 @@ public class TournamentService {
                     next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
 
                     cem.forEach(createEntityModel -> {
-                        if (createEntityModel.getIdFromModel() == gridElementLinkModel.getId())
+                        if (createEntityModel.getIdFromModel().equals(gridElementLinkModel.getId()))
                         //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
                         {
                             next.setIdNext(createEntityModel.getId().intValue());
@@ -309,25 +304,109 @@ public class TournamentService {
 
         Set<TournamentParticipant> tps = tournamentParticipantRepository.findByTournament_Id((long) id);
 
-        tps.forEach(tournamentParticipant -> {
+        for(TournamentParticipant tournamentParticipant : tps){
             if (tournamentParticipant.getUser() == null) {
                 tournamentParticipant.setUser(user);
                 tournamentParticipantRepository.save(tournamentParticipant);
+                return;
             }
-        });
+        }
     }
 
     public Set<GetParticipantsModel> getParticipants(int id) {
         Set<TournamentParticipant> tps = tournamentParticipantRepository.findByTournament_Id((long) id);
         Set<GetParticipantsModel> models = new HashSet<>();
 
-        tps.forEach(tournamentParticipant -> {
+        for(TournamentParticipant tournamentParticipant : tps){
             GetParticipantsModel model = new GetParticipantsModel();
             model.setId(tournamentParticipant.getId());
-            model.setUser_id(tournamentParticipant.getUser().getId());
-            model.setLogin(tournamentParticipant.getUser().getLogin());
+            if (tournamentParticipant.getUser() != null) {
+                model.setUser_id(tournamentParticipant.getUser().getId());
+                model.setLogin(tournamentParticipant.getUser().getLogin());
+            }
             models.add(model);
-        });
+        }
+
         return models;
+    }
+
+    public Set<GroupModel> getGroups(int id) {
+        Set<TournamentGroup> grs = tournamentGroupRepository.findByTournament_Id((long) id);
+        Set<GroupModel> gms = new HashSet<>();
+
+        grs.forEach(tournamentGroup -> {
+            GroupModel gm = new GroupModel();
+            gm.setId(tournamentGroup.getId());
+            gm.setName(tournamentGroup.getName());
+            gm.setNumberOfPlayers(tournamentGroup.getNumberOfPlayers());
+            gm.setNumberOfPlayersPlayoff(tournamentGroup.getNumberOfPlayersPlayoff());
+            gm.setPointsDraw(tournamentGroup.getPointsDraw());
+            gm.setPointsWin(tournamentGroup.getPointsWin());
+
+            Set<GetParticipantsModel> gpm = new HashSet<>();
+            ArrayList<GroupParticipant> gp =  groupParticipantRepository.findByGroup(tournamentGroup);
+
+            gp.forEach(groupParticipant -> {
+                GetParticipantsModel getParticipantsModel = new GetParticipantsModel();
+                getParticipantsModel.setId(groupParticipant.getId());
+                getParticipantsModel.setLogin(groupParticipant.getParticipant().getUser().getLogin());
+                getParticipantsModel.setUser_id(groupParticipant.getParticipant().getUser().getId());
+
+                gpm.add(getParticipantsModel);
+            });
+
+            gm.setParticipants(gpm);
+
+            gm.setNexts(nextRepository.findByThisTypeAndIdThis(nextTypeRepository.findByName("group"),tournamentGroup.getId().intValue()));
+
+            gm.setLasts(nextRepository.findByNextTypeAndIdNext(nextTypeRepository.findByName("group"),tournamentGroup.getId().intValue()));
+
+            gms.add(gm);
+
+        });
+
+        return gms;
+
+    }
+
+    public Set<MatchModel> getMatches(int id) {
+        Set<Match> ms = matchRepository.findByPlayoff_Tournament_Id((long) id);
+        Set<MatchModel> mms = new HashSet<>();
+
+        ms.forEach(match -> {
+            MatchModel m = new MatchModel();
+            m.setId(match.getId());
+
+            if (match.getRound()!=null) m.setId_group(match.getRound().getGroup().getId());
+            if (match.getPlayoff()!=null) m.setId_playoff(match.getPlayoff().getId());
+
+            Set<GetParticipantsModel> pm = new HashSet<>();
+         //   ArrayList<GroupParticipant> gp =  groupParticipantRepository.findByGroup(tournamentGroup);
+            if (match.getPlayer1()!=null) {
+                GetParticipantsModel getParticipantsModel1 = new GetParticipantsModel();
+                getParticipantsModel1.setId(match.getPlayer1().getId());
+                getParticipantsModel1.setLogin(match.getPlayer1().getUser().getLogin());
+                getParticipantsModel1.setUser_id(match.getPlayer1().getUser().getId());
+                pm.add(getParticipantsModel1);
+            }
+            if (match.getPlayer2()!=null) {
+                GetParticipantsModel getParticipantsModel2 = new GetParticipantsModel();
+                getParticipantsModel2.setId(match.getPlayer2().getId());
+                getParticipantsModel2.setLogin(match.getPlayer2().getUser().getLogin());
+                getParticipantsModel2.setUser_id(match.getPlayer2().getUser().getId());
+                pm.add(getParticipantsModel2);
+            }
+
+            m.setParticipants(pm);
+
+            m.setNexts(nextRepository.findByThisTypeAndIdThis(nextTypeRepository.findByName("match"),match.getId().intValue()));
+
+            m.setLasts(nextRepository.findByNextTypeAndIdNext(nextTypeRepository.findByName("match"),match.getId().intValue()));
+
+            mms.add(m);
+
+        });
+
+        return mms;
     }
 }

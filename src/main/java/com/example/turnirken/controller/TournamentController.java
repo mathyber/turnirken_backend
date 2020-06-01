@@ -1,9 +1,6 @@
 package com.example.turnirken.controller;
 
-import com.example.turnirken.dto.CreateTournamentModel;
-import com.example.turnirken.dto.GetParticipantsModel;
-import com.example.turnirken.dto.GetTourIdModel;
-import com.example.turnirken.dto.SaveTourGridModel;
+import com.example.turnirken.dto.*;
 import com.example.turnirken.entity.Tournament;
 import com.example.turnirken.service.TournamentService;
 import com.sun.net.httpserver.Authenticator;
@@ -66,6 +63,16 @@ class TournamentController {
     @PostMapping("/getParticipants")
     public Set<GetParticipantsModel> getParticipants(@RequestBody GetTourIdModel model){
         return tournamentService.getParticipants(model.getId());
+    }
+
+    @PostMapping("/getGroups")
+    public Set<GroupModel> getGroups(@RequestBody GetTourIdModel model){
+        return tournamentService.getGroups(model.getId());
+    }
+
+    @PostMapping("/getMatches")
+    public Set<MatchModel> getMatches(@RequestBody GetTourIdModel model){
+        return tournamentService.getMatches(model.getId());
     }
 
     @GetMapping("/getTournaments")

@@ -67,9 +67,6 @@ public class Tournament {
     @Column(name = "logo")
     private String logo;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "id")
-    private Set<TournamentGroup> groups;
-
     @Column(name = "grid")
     private String grid;
 }
