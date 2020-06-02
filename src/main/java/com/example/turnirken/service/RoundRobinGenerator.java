@@ -20,7 +20,7 @@ public class RoundRobinGenerator {
 
     void ListMatches(ArrayList<GroupParticipant> participants, TournamentGroup tg)
     {
-        int numUsers = participants.size();
+
         if (participants.size() % 2 != 0)
         {
             TournamentParticipant tp = new TournamentParticipant();
@@ -28,14 +28,14 @@ public class RoundRobinGenerator {
             GroupParticipant gp = new GroupParticipant();
             participants.add(gp); // If odd number of teams add a dummy
         }
-
+        int numUsers = participants.size();
         int numDays = (numUsers - 1); // Days needed to complete tournament
         int halfSize = numUsers / 2;
 
         ArrayList<GroupParticipant> participants1 = new ArrayList<>();
 
         participants1.addAll(participants);
-        participants1.remove(participants1.iterator());
+        participants1.remove(0);
 
         int participantsSize = participants1.size();
 
@@ -53,7 +53,7 @@ public class RoundRobinGenerator {
             match.setRound(rnd);
             match.setPlayer1(participants1.get(Idx).getParticipant());
             match.setPlayer2(participants.get(0).getParticipant());
-            if(!match.getPlayer1().getNameInTournament().equals("Fake") && !match.getPlayer1().getNameInTournament().equals("Fake"))
+            if(!match.getPlayer1().getNameInTournament().equals("Fake") && !match.getPlayer2().getNameInTournament().equals("Fake") && match.getPlayer2() != match.getPlayer1())
                 matchRepository.save(match);
 
             for (int idx = 1; idx < halfSize; idx++)
@@ -65,7 +65,7 @@ public class RoundRobinGenerator {
                 match1.setRound(rnd);
                 match1.setPlayer1(participants1.get(pl1).getParticipant());
                 match1.setPlayer2(participants1.get(pl2).getParticipant());
-                if(!match.getPlayer1().getNameInTournament().equals("Fake") && !match.getPlayer1().getNameInTournament().equals("Fake"))
+                if(!match.getPlayer1().getNameInTournament().equals("Fake") && !match.getPlayer2().getNameInTournament().equals("Fake") && match.getPlayer2() != match.getPlayer1())
                     matchRepository.save(match1);
             }
         }

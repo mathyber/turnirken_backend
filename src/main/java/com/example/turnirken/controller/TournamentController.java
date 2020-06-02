@@ -72,7 +72,18 @@ class TournamentController {
 
     @PostMapping("/getMatches")
     public Set<MatchModel> getMatches(@RequestBody GetTourIdModel model){
-        return tournamentService.getMatches(model.getId());
+        return tournamentService.getMatches(model.getId(),true);
+       // return tournamentService.getMatches(model.getId(),false);
+    }
+
+    @PostMapping("/setMatchesAndGroups")
+    public ResponseEntity<?> getMatchesAndGroups(@RequestBody GroupMatchModel model){
+        try {
+            tournamentService.saveGroups(model.getGroups());
+            tournamentService.saveMatches(model.getMatches());
+            return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<Error>(HttpStatus.CONFLICT);}
     }
 
     @GetMapping("/getTournaments")

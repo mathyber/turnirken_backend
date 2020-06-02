@@ -9,6 +9,7 @@ import java.util.Set;
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Long> {
     Set<Match> findByPlayoff_Tournament_Id(Long id);
+    Set<Match> findByRound_Group_Tournament_Id(Long id);
     Set<Match> findByRound_Group_Id(Long id);
 
 }

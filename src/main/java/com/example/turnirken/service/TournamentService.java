@@ -25,8 +25,9 @@ public class TournamentService {
     private PlayoffRepository playoffRepository;
     private GroupService groupService;
     private GroupParticipantRepository groupParticipantRepository;
+    private RoundRobinGenerator roundRobinGenerator;
 
-    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentSystemRepository tournamentSystemRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService, GroupParticipantRepository groupParticipantRepository) {
+    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentSystemRepository tournamentSystemRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService, GroupParticipantRepository groupParticipantRepository, RoundRobinGenerator roundRobinGenerator) {
         this.tournamentRepository = tournamentRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
@@ -40,6 +41,7 @@ public class TournamentService {
         this.playoffRepository = playoffRepository;
         this.groupService = groupService;
         this.groupParticipantRepository = groupParticipantRepository;
+        this.roundRobinGenerator = roundRobinGenerator;
     }
 
     public Tournament create(CreateTournamentModel model) {
@@ -369,8 +371,10 @@ public class TournamentService {
 
     }
 
-    public Set<MatchModel> getMatches(int id) {
-        Set<Match> ms = matchRepository.findByPlayoff_Tournament_Id((long) id);
+    public Set<MatchModel> getMatches(int id, boolean playoffs) {
+        Set<Match> ms;
+        if(playoffs) ms = matchRepository.findByPlayoff_Tournament_Id((long) id);
+        else ms = matchRepository.findByRound_Group_Tournament_Id((long) id);
         Set<MatchModel> mms = new HashSet<>();
 
         ms.forEach(match -> {
@@ -408,5 +412,57 @@ public class TournamentService {
         });
 
         return mms;
+    }
+
+    public void saveGroups(Set<SaveGroupAndMatchesModel> groups) {
+     //   System.out.println("HELLOOOOOOOOOOOOOOO SAVE GROUP");
+
+        Set<Integer> ss = new HashSet<>();
+        for( SaveGroupAndMatchesModel saveGroupAndMatchesModel : groups ) {
+            ss.add(saveGroupAndMatchesModel.getId());
+            if (groupParticipantRepository.findByGroup(tournamentGroupRepository.findById((long)saveGroupAndMatchesModel.getId()).get()).size() < tournamentGroupRepository.findById((long) saveGroupAndMatchesModel.getId()).get().getNumberOfPlayers()) {
+                GroupParticipant groupParticipant = new GroupParticipant();
+                groupParticipant.setGroup(tournamentGroupRepository.findById((long) saveGroupAndMatchesModel.getId()).get());
+                groupParticipant.setParticipant(tournamentParticipantRepository.findById((long) saveGroupAndMatchesModel.getIdPart()).get());
+                if (groupParticipantRepository.findByGroup_IdAndParticipant_Id(groupParticipant.getId(), groupParticipant.getParticipant().getId())==null)
+                    groupParticipantRepository.save(groupParticipant);
+            }
+         /*   for ( GroupParticipant groupParticipant : groupParticipantRepository.findByGroup(tournamentGroupRepository.findById((long)saveGroupAndMatchesModel.getId()).get())){
+                if(groupParticipant.getParticipant()!=null) {
+                    groupParticipant.setGroup(tournamentGroupRepository.findById((long)saveGroupAndMatchesModel.getId()).get());
+                    groupParticipant.setParticipant(tournamentParticipantRepository.findById((long)saveGroupAndMatchesModel.getIdPart()).get());
+                    groupParticipantRepository.save(groupParticipant);
+                    return;*/
+             }
+
+        for( Integer intr : ss ) {
+            if (groupParticipantRepository.findByGroup(tournamentGroupRepository.findById((long)intr).get()).size() == tournamentGroupRepository.findById((long) intr).get().getNumberOfPlayers()){
+                ArrayList<GroupParticipant> gps = groupParticipantRepository.findByGroup(tournamentGroupRepository.findById((long) intr).get());
+                roundRobinGenerator.ListMatches(gps, tournamentGroupRepository.findById((long) intr).get());}
+        }
+
+    }
+
+    public void saveMatchesOfGroup(ArrayList<GroupParticipant> gps, TournamentGroup tg){
+        roundRobinGenerator.ListMatches(gps,tg);
+    }
+
+    public void saveMatches(Set<SaveGroupAndMatchesModel> matches) {
+        for( SaveGroupAndMatchesModel saveGroupAndMatchesModel : matches ){
+            Match m = matchRepository.findById((long)saveGroupAndMatchesModel.getId()).get();
+            if(m.getPlayer1()==null && m.getPlayer2()==null){
+                m.setPlayer1(tournamentParticipantRepository.findById((long)saveGroupAndMatchesModel.getIdPart()).get());
+            } else if(m.getPlayer1()==null || m.getPlayer2()==null){
+                if (m.getPlayer1()==null) {
+                    if(m.getPlayer2().getUser().getId().intValue() != saveGroupAndMatchesModel.getIdPart())
+                        m.setPlayer1(tournamentParticipantRepository.findById((long)saveGroupAndMatchesModel.getIdPart()).get());
+                }
+                if (m.getPlayer2()==null) {
+                    if(m.getPlayer1().getUser().getId().intValue() != saveGroupAndMatchesModel.getIdPart())
+                        m.setPlayer2(tournamentParticipantRepository.findById((long)saveGroupAndMatchesModel.getIdPart()).get());
+                }
+            }
+            matchRepository.save(m);
+        }
     }
 }
