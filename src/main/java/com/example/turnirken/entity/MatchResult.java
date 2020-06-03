@@ -19,7 +19,7 @@ public class MatchResult {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "player_id", nullable = false)
-    private TournamentParticipant resultCreator;
+    private AppUser resultCreator;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "match_id", nullable = false)

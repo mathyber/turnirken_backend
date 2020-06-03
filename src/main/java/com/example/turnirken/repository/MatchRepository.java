@@ -11,5 +11,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     Set<Match> findByPlayoff_Tournament_Id(Long id);
     Set<Match> findByRound_Group_Tournament_Id(Long id);
     Set<Match> findByRound_Group_Id(Long id);
+    Set<Match> findByPlayer1_Id(Long id);
+    Set<Match> findByPlayer2_Id(Long id);
 
 }

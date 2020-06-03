@@ -257,7 +257,7 @@ public class TournamentService {
 
             final int[] i = new int[1];
             cem.forEach(createEntityModel -> {
-                if (createEntityModel.getIdFromModel() == gridElemementModel.getId())
+                if (createEntityModel.getIdFromModel().equals(gridElemementModel.getId()))
                 //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
                 {
                     i[0] = createEntityModel.getId().intValue();

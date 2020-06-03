@@ -11,4 +11,6 @@ import java.util.Set;
 public interface TournamentParticipantRepository extends JpaRepository<TournamentParticipant, Long> {
     Optional<TournamentParticipant> findById(Long id);
     Set<TournamentParticipant> findByTournament_Id(Long tourId);
+    TournamentParticipant findByUser_Id(Long id);
+    TournamentParticipant findByUser_IdAndTournament_Id(Long id, Long t);
 }
