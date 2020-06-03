@@ -36,4 +36,7 @@ public class MatchResult {
 
     @Column(name = "info")
     private String info;
+
+    @Column(name = "finish")
+    private boolean finish;
 }

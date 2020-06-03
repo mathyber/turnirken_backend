@@ -1,39 +1,35 @@
 package com.example.turnirken.service;
 
-import com.example.turnirken.dto.GroupPartResModel;
-import com.example.turnirken.dto.GroupResModel;
-import com.example.turnirken.dto.MatchResModel;
-import com.example.turnirken.dto.ParticipantsModel;
-import com.example.turnirken.entity.GroupParticipant;
-import com.example.turnirken.entity.Match;
-import com.example.turnirken.entity.TournamentGroup;
-import com.example.turnirken.repository.GroupParticipantRepository;
-import com.example.turnirken.repository.MatchRepository;
-import com.example.turnirken.repository.TournamentGroupRepository;
+import com.example.turnirken.dto.*;
+import com.example.turnirken.entity.*;
+import com.example.turnirken.repository.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class GroupService {
     private final TournamentGroupRepository tournamentGroupRepository;
     private final MatchRepository matchRepository;
-    //  private final TournamentParticipantRepository tournamentParticipantRepository;
     private final RoundRobinGenerator roundRobinGenerator;
     private final GroupParticipantRepository groupParticipantRepository;
     private final MatchService matchService;
+    private final NextRepository nextRepository;
+    private final NextTypeRepository nextTypeRepository;
+    private final TournamentRepository tournamentRepository;
+    private final TournamentParticipantRepository tournamentParticipantRepository;
 
-    public GroupService(TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, RoundRobinGenerator roundRobinGenerator, GroupParticipantRepository groupParticipantRepository, MatchService matchService) {
+    public GroupService(TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, RoundRobinGenerator roundRobinGenerator, GroupParticipantRepository groupParticipantRepository, MatchService matchService, NextRepository nextRepository, NextTypeRepository nextTypeRepository, TournamentRepository tournamentRepository, TournamentParticipantRepository tournamentParticipantRepository) {
 
         this.tournamentGroupRepository = tournamentGroupRepository;
         this.matchRepository = matchRepository;
-        //  this.tournamentParticipantRepository = tournamentParticipantRepository;
         this.roundRobinGenerator = roundRobinGenerator;
         this.groupParticipantRepository = groupParticipantRepository;
         this.matchService = matchService;
+        this.nextRepository = nextRepository;
+        this.nextTypeRepository = nextTypeRepository;
+        this.tournamentRepository = tournamentRepository;
+        this.tournamentParticipantRepository = tournamentParticipantRepository;
     }
 
     //  public Game create(Game game) {
@@ -45,6 +41,59 @@ public class GroupService {
         roundRobinGenerator.ListMatches(tp, group);
     }
 
+
+    public void nextStageForGroup(TournamentGroup group) {
+        if (finishGroup(group)) {
+            Set<Next> nr = nextRepository.findByThisTypeAndIdThis(nextTypeRepository.findByName("group"), group.getId().intValue());
+            GroupResModel grm = getGroup(group.getId().intValue());
+            for (Next next : nr) {
+                GroupPartResModel gprm = grm.getResults().get(next.getPlace() - 1);
+                if (next.getNextType().equals(nextTypeRepository.findByName("group"))) {
+                    TournamentGroup gr = tournamentGroupRepository.findById((long) next.getIdNext()).get();
+                    GroupParticipant gp = new GroupParticipant();
+                    TournamentParticipant tp = tournamentParticipantRepository.findById(gprm.getPart().getId()).get();
+                    gp.setParticipant(tp);
+                    gp.setGroup(gr);
+                    groupParticipantRepository.save(gp);
+                }
+                if (next.getNextType().equals(nextTypeRepository.findByName("match"))) {
+                    Match m = matchRepository.findById((long) next.getIdNext()).get();
+                    if (m.getPlayer1() == null) {
+                        m.setPlayer1(tournamentParticipantRepository.findById(gprm.getPart().getId()).get());
+                    } else if (m.getPlayer2() == null) {
+                        m.setPlayer2(tournamentParticipantRepository.findById(gprm.getPart().getId()).get());
+                    }
+                    matchRepository.save(m);
+                }
+                if (next.getNextType().equals(nextTypeRepository.findByName("result"))) {
+                    if (next.getIdNext() == 1) {
+                        Tournament t = group.getTournament();
+                        t.setDateFinish(new Date());
+                        tournamentRepository.save(t);
+                    }
+                }//  gprm.getPart();
+            }
+        }
+    }
+
+
+    public boolean finishGroup(TournamentGroup group) {
+        if (group.isFinish()) return true;
+        Set<Match> m2 = matchRepository.findByRound_Group_Id(group.getId());
+        int i = 0;
+        if (m2.size() != 0) {
+            for (Match match : m2) {
+                if (match.isGameOverFlag()) i++;
+            }
+            if (i == m2.size()) {
+                group.setFinish(true);
+                tournamentGroupRepository.save(group);
+                nextStageForGroup(group);
+                return true;
+            }
+        }
+        return false;
+    }
 
     public GroupPartResModel getPartRes(GroupParticipant GrPart) {
         Set<Match> m1 = matchRepository.findByPlayer1AndRound_Group(GrPart.getParticipant(), GrPart.getGroup());
@@ -111,9 +160,9 @@ public class GroupService {
 
             Collections.sort(groupPartResModels, SortGroup.SORT_BY_POINTS_DIFFERENCE_WINS_DRAWS);
 
-            for(int i=0; i<groupPartResModels.size(); i++){
-                groupPartResModels.get(i).setPlace(i+1);
-                if((i+1)<=group.getNumberOfPlayersPlayoff()) groupPartResModels.get(i).setWin(true);
+            for (int i = 0; i < groupPartResModels.size(); i++) {
+                groupPartResModels.get(i).setPlace(i + 1);
+                if ((i + 1) <= group.getNumberOfPlayersPlayoff()) groupPartResModels.get(i).setWin(true);
             }
             groupResModel.setResults(groupPartResModels);
         }
@@ -121,19 +170,28 @@ public class GroupService {
         groupResModel.setGroupName(group.getName());
         groupResModel.setIdGroup(group.getId());
         groupResModel.setIdTour(group.getTournament().getId());
-
+        if (finishGroup(group)) groupResModel.setFinish(true);
         return groupResModel;
     }
 
     //вернуть резы всех групп турнира
     public Set<GroupResModel> getGroupsTour(int id) {
-        Set<TournamentGroup> grs = tournamentGroupRepository.findByTournament_Id((long)id);
+        Set<TournamentGroup> grs = tournamentGroupRepository.findByTournament_Id((long) id);
         Set<GroupResModel> groupResModels = new HashSet<>();
-        if(grs.size()!=0){
-            for(TournamentGroup tournamentGroup: grs){
+        if (grs.size() != 0) {
+            for (TournamentGroup tournamentGroup : grs) {
                 groupResModels.add(getGroup(tournamentGroup.getId().intValue()));
             }
         }
         return groupResModels;
+    }
+
+    public void getGroupsPoints(GroupPointsModel model) {
+        TournamentGroup group = tournamentGroupRepository.findById(model.getIdGroup()).get();
+        if (!group.isFinish()) {
+            group.setPointsWin(model.getNumWin());
+            group.setPointsDraw(model.getNumDraw());
+            tournamentGroupRepository.save(group);
+        }
     }
 }

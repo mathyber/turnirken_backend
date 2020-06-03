@@ -14,6 +14,7 @@ public class MatchModel {
     private Long id_playoff;
     private int round;
     private Long id_group;
+    private String string;
     private Set<GetParticipantsModel> participants;
     private Set<Next> nexts;
     private Set<Next> lasts;

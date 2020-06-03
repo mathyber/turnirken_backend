@@ -45,3 +45,8 @@ databaseChangeLog:
                   type: varchar
                   constraints:
                     nullable: true
+              - column:
+                  name: finish
+                  type: boolean
+                  constraints:
+                    nullable: true

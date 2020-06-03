@@ -36,4 +36,7 @@ public class TournamentGroup {
     @Column(name = "points_for_draw")
     private int pointsDraw;
 
+    @Column(name = "finish")
+    private boolean finish;
+
 }

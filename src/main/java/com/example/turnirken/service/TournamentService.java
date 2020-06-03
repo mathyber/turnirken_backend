@@ -24,10 +24,11 @@ public class TournamentService {
     private StageRepository stageRepository;
     private PlayoffRepository playoffRepository;
     private GroupService groupService;
+    private MatchService matchService;
     private GroupParticipantRepository groupParticipantRepository;
     private RoundRobinGenerator roundRobinGenerator;
 
-    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentSystemRepository tournamentSystemRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService, GroupParticipantRepository groupParticipantRepository, RoundRobinGenerator roundRobinGenerator) {
+    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentSystemRepository tournamentSystemRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService, MatchService matchService, GroupParticipantRepository groupParticipantRepository, RoundRobinGenerator roundRobinGenerator) {
         this.tournamentRepository = tournamentRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
@@ -40,6 +41,7 @@ public class TournamentService {
         this.stageRepository = stageRepository;
         this.playoffRepository = playoffRepository;
         this.groupService = groupService;
+        this.matchService = matchService;
         this.groupParticipantRepository = groupParticipantRepository;
         this.roundRobinGenerator = roundRobinGenerator;
     }
@@ -159,7 +161,7 @@ public class TournamentService {
 
             Stage stage = new Stage();
             if (stageRepository.findByName(gridElemementModel.getStage()) == null) {
-                System.out.println("AAAAAAAAAAAAAAAAAA A");
+              //  System.out.println("AAAAAAAAAAAAAAAAAA A");
                 stage.setName(gridElemementModel.getStage());
                 stageRepository.save(stage);
             } else {
@@ -247,7 +249,8 @@ public class TournamentService {
                             next.setIdNext(createEntityModel.getId().intValue());
                         }
                     });
-                    next.setPlace(gridElementLinkModel.getPlace());
+                    int i1=2; if(gridElementLinkModel.isWin()) i1=1;
+                    next.setPlace(i1);
                     nextRepository.save(next);
                 });
         });
@@ -381,8 +384,13 @@ public class TournamentService {
             MatchModel m = new MatchModel();
             m.setId(match.getId());
 
-            if (match.getRound()!=null) m.setId_group(match.getRound().getGroup().getId());
-            if (match.getPlayoff()!=null) m.setId_playoff(match.getPlayoff().getId());
+            if (match.getRound()!=null)
+                m.setId_group(match.getRound().getGroup().getId());
+
+            if (match.getPlayoff()!=null) {
+                m.setId_playoff(match.getPlayoff().getId());
+                m.setString(match.getPlayoff().getStage().getName());
+            }
 
             Set<GetParticipantsModel> pm = new HashSet<>();
          //   ArrayList<GroupParticipant> gp =  groupParticipantRepository.findByGroup(tournamentGroup);

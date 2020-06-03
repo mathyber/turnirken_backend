@@ -1,9 +1,6 @@
 package com.example.turnirken.controller;
 
-import com.example.turnirken.dto.CreateResultMatchModel;
-import com.example.turnirken.dto.GetTourIdModel;
-import com.example.turnirken.dto.GroupResModel;
-import com.example.turnirken.dto.MatchResModel;
+import com.example.turnirken.dto.*;
 import com.example.turnirken.service.GroupService;
 import com.example.turnirken.service.MatchService;
 import com.sun.net.httpserver.Authenticator;
@@ -36,6 +33,11 @@ public class GroupController {
     @PostMapping("/getGroup")
     public GroupResModel getGroup(@RequestBody GetTourIdModel model){
         return groupService.getGroup(model.getId());
+    }
+
+    @PostMapping("/getGroupsPoints")
+    public void getGroupsPoints(@RequestBody GroupPointsModel model){
+        groupService.getGroupsPoints(model);
     }
 /*
     @PostMapping("/setResult")
