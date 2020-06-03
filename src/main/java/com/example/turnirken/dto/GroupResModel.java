@@ -10,6 +10,7 @@ import java.util.Set;
 @Setter
 public class GroupResModel {
     private Long idGroup;
+    private Long idTour;
     private String groupName;
     private ArrayList<GroupPartResModel> results;
     private boolean finish;

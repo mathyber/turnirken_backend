@@ -10,10 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class MatchService {
@@ -41,6 +38,7 @@ public class MatchService {
         MatchResModel matchResModel = new MatchResModel();
         if (match.getRound() != null) {
             matchResModel.setGroupName(match.getRound().getGroup().getName());
+            matchResModel.setGroupId(match.getRound().getGroup().getId().intValue());
             matchResModel.setRound(match.getRound().getNum());
             Tournament t = match.getRound().getGroup().getTournament();
             TournamentModel tm = new TournamentModel();
@@ -269,5 +267,18 @@ public class MatchService {
 
         return res;
 
+    }
+
+    public ArrayList<MatchResModel> getMatchesGroup(int id) {
+        ArrayList<MatchResModel> res = new ArrayList<>();
+        Set<Match> m2 = matchRepository.findByRound_Group_Id((long) id);
+
+        for (Match match : m2) {
+            MatchResModel mr = getMatchResult(match.getId().intValue());
+            res.add(mr);
+        }
+        Collections.sort(res, SortGroup.SORT_BY_ROUND);
+
+        return res;
     }
 }

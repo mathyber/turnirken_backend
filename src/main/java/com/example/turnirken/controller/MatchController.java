@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 @RestController
@@ -33,6 +34,11 @@ public class MatchController {
     @PostMapping("/getAllMatchesTournament")
     public Set<MatchResModel> getAllMatchesTournament(@RequestBody GetTourIdModel model){
         return matchService.getAllMatchesTournament(model.getId());
+    }
+
+    @PostMapping("/getMatchesGroup")
+    public ArrayList<MatchResModel> getMatchesGroup(@RequestBody GetTourIdModel model){
+        return matchService.getMatchesGroup(model.getId());
     }
 
     @PostMapping("/getMatchById")

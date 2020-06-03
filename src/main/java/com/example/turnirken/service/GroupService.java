@@ -120,6 +120,7 @@ public class GroupService {
 
         groupResModel.setGroupName(group.getName());
         groupResModel.setIdGroup(group.getId());
+        groupResModel.setIdTour(group.getTournament().getId());
 
         return groupResModel;
     }

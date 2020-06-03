@@ -13,6 +13,7 @@ public class MatchResModel {
     private TournamentModel tournament;
     private int round;
     private String groupName;
+    private int groupId;
     private GetParticipantsModel player1;
     private GetParticipantsModel player2;
     private int resPlayer1;

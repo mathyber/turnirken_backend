@@ -1,6 +1,7 @@
 package com.example.turnirken.service;
 
 import com.example.turnirken.dto.GroupPartResModel;
+import com.example.turnirken.dto.MatchResModel;
 
 import java.util.Comparator;
 
@@ -19,6 +20,13 @@ public class SortGroup {
                 }
             }
             return i;
+        }
+    };
+
+    public static Comparator<MatchResModel> SORT_BY_ROUND = new Comparator<MatchResModel>() {
+        @Override
+        public int compare(MatchResModel o1, MatchResModel o2) {
+            return o1.getRound()-o2.getRound();
         }
     };
 }
