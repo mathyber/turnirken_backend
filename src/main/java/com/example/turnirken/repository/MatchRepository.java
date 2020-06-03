@@ -1,6 +1,8 @@
 package com.example.turnirken.repository;
 
 import com.example.turnirken.entity.Match;
+import com.example.turnirken.entity.TournamentGroup;
+import com.example.turnirken.entity.TournamentParticipant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +15,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     Set<Match> findByRound_Group_Id(Long id);
     Set<Match> findByPlayer1_Id(Long id);
     Set<Match> findByPlayer2_Id(Long id);
+    Set<Match> findByPlayer1AndRound_Group(TournamentParticipant tp, TournamentGroup tg);
+    Set<Match> findByPlayer2AndRound_Group(TournamentParticipant tp, TournamentGroup tg);
 
 }

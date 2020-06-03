@@ -3,6 +3,7 @@ package com.example.turnirken.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 @Getter
@@ -10,6 +11,6 @@ import java.util.Set;
 public class GroupResModel {
     private Long idGroup;
     private String groupName;
-    private Set<GroupPartResModel> results;
+    private ArrayList<GroupPartResModel> results;
     private boolean finish;
 }
