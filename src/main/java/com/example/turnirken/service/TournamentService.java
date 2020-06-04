@@ -75,7 +75,7 @@ public class TournamentService {
         t.setDateFinish(model.getDateFinish());
         t.setDateStart(model.getDateStart());
         t.setDateFinishReg(model.getDateFinishReg());
-        t.setDateStartReg(model.getDateStartReg());
+        t.setDateStartReg(new Date());
         t.setNumToWin(model.getNumToWin());
         t.setOnlyAdminResult(model.isOnlyAdminResult());
         t.setInfo(model.getInfo());
@@ -86,8 +86,44 @@ public class TournamentService {
         return tournamentRepository.save(t);
     }
 
-    public List<Tournament> getTours() {
-        return tournamentRepository.findAll();
+    public TournamentForPageModel toModel(Tournament tournament){
+        TournamentForPageModel tournamentForPageModel = new TournamentForPageModel();
+        tournamentForPageModel.setId(tournament.getId());
+        tournamentForPageModel.setTournamentName(tournament.getTournamentName().getName());
+        tournamentForPageModel.setSeason(tournament.getSeason());
+        GetParticipantsModel getParticipantsModel = new GetParticipantsModel();
+        getParticipantsModel.setUser_id(tournament.getOrganizer().getId());
+        getParticipantsModel.setLogin(tournament.getOrganizer().getLogin());
+        tournamentForPageModel.setOrganizer(getParticipantsModel);
+        tournamentForPageModel.setDateStartReg(tournament.getDateStartReg());
+        tournamentForPageModel.setDateStart(tournament.getDateStart());
+        tournamentForPageModel.setDateFinish(tournament.getDateFinish());
+        tournamentForPageModel.setDateFinishReg(tournament.getDateFinishReg());
+        tournamentForPageModel.setMaxParticipants(tournament.getMaxParticipants());
+        tournamentForPageModel.setGame(tournament.getGamesNum());
+        tournamentForPageModel.setNumToWin(tournament.getNumToWin());
+        tournamentForPageModel.setOnlyAdminResult(tournament.isOnlyAdminResult());
+        tournamentForPageModel.setStatus(tournament.isStatus());
+        tournamentForPageModel.setInfo(tournament.getInfo());
+        tournamentForPageModel.setLogo(tournament.getLogo());
+        tournamentForPageModel.setGameName(tournament.getTournamentName().getGame().getName());
+        tournamentForPageModel.setGrid(tournament.getGrid());
+        tournamentForPageModel.setParticipants(tournamentParticipantRepository.findByTournament(tournament).size());
+        return tournamentForPageModel;
+    }
+
+    public List<TournamentForPageModel> getTours() {
+
+        List<TournamentForPageModel> tournamentForPageModels = new ArrayList<>();
+
+        List<Tournament> ts = tournamentRepository.findAll();
+        ts.forEach(tournament -> {
+            TournamentForPageModel tournamentForPageModel = toModel(tournament);
+            tournamentForPageModels.add(tournamentForPageModel);
+        });
+
+        Collections.sort(tournamentForPageModels, SortTournaments.SORT_BY_DATE);
+        return tournamentForPageModels;
     }
 
     public boolean tournamentGrid(int id){
@@ -115,7 +151,7 @@ public class TournamentService {
         }
 
 
-    public void gridSave(SaveTourGridModel model) {
+    public boolean gridSave(SaveTourGridModel model) {
 
         //  try {
         //  JSONObject json =
@@ -124,22 +160,41 @@ public class TournamentService {
         AppUser user = userRepository.findByLogin(login);
 
         Tournament tournament = tournamentRepository.findById((long) model.getId()).get();
-        if (tournament.getOrganizer().getId() != user.getId()) return;
+        if (tournament.getOrganizer().getId() != user.getId()) return false;
 
+       // tournament.setGrid("");
+       // tournamentRepository.saveAndFlush(tournament);
         tournament.setGrid(model.getGrid());
+        //tournamentRepository.save(tournament);
 
         Set<CreateEntityModel> cem = new HashSet<>();
 
-        model.getUsers().forEach(gridElemementModel -> {
-            TournamentParticipant tp = new TournamentParticipant();
-            tp.setTournament(tournament);
-            tp.setNameInTournament(gridElemementModel.getName());
-            CreateEntityModel crmod = new CreateEntityModel();
-            crmod.setId(tournamentParticipantRepository.save(tp).getId());
-            crmod.setType(nextTypeRepository.findByName("user"));
-            crmod.setIdFromModel(gridElemementModel.getId());
-            cem.add(crmod);
-        });
+        ArrayList<TournamentParticipant> tps = tournamentParticipantRepository.findByTournament(tournamentRepository.findById((long) model.getId()).get());
+        if(tps.size()!=model.getUsers().size()) {
+            tournamentRepository.save(tournament);
+            return false;
+        }
+        int k=0;
+        for(GridElemementModel gridElemementModel: model.getUsers()){
+                CreateEntityModel crmod = new CreateEntityModel();
+                crmod.setId(tps.get(k).getId());
+                crmod.setType(nextTypeRepository.findByName("user"));
+                crmod.setIdFromModel(gridElemementModel.getId());
+                cem.add(crmod);
+                k++;
+            }
+     //   model.getUsers().forEach(gridElemementModel -> {
+
+           // TournamentParticipant tp = new TournamentParticipant();
+          //  tp.setTournament(tournament);
+          //  tp.setNameInTournament(gridElemementModel.getName());
+
+         //   CreateEntityModel crmod = new CreateEntityModel();
+         //   crmod.setId(tps.get());
+      //      crmod.setType(nextTypeRepository.findByName("user"));
+      //      crmod.setIdFromModel(gridElemementModel.getId());
+       //     cem.add(crmod);
+      //  });
 
         model.getGroups().forEach(gridElemementModel -> {
             TournamentGroup tg = new TournamentGroup();
@@ -292,12 +347,15 @@ public class TournamentService {
             groupService.createGroupMatches(tournamentGroup);
         });*/
 
+        tournament.setDateStart(new Date());
+        tournamentRepository.save(tournament);
         System.out.println("Creating DONE");
+        return true;
 
     }
 
-    public Optional<Tournament> getTourId(Long Id) {
-        return tournamentRepository.findById(Id);
+    public TournamentForPageModel getTourId(Long Id) {
+        return toModel(tournamentRepository.findById(Id).get());
     }
 
     public void createParticipate(int id) {
@@ -309,7 +367,13 @@ public class TournamentService {
 
         Set<TournamentParticipant> tps = tournamentParticipantRepository.findByTournament_Id((long) id);
 
-        for(TournamentParticipant tournamentParticipant : tps){
+        if(tps.size()<tournamentRepository.findById((long) id).get().getMaxParticipants()){
+            TournamentParticipant tp = new TournamentParticipant();
+            tp.setTournament(tournamentRepository.findById((long) id).get());
+            tp.setUser(user);
+            tournamentParticipantRepository.save(tp);
+        }
+        else for(TournamentParticipant tournamentParticipant : tps){
             if (tournamentParticipant.getUser() == null) {
                 tournamentParticipant.setUser(user);
                 tournamentParticipantRepository.save(tournamentParticipant);
@@ -472,5 +536,27 @@ public class TournamentService {
             }
             matchRepository.save(m);
         }
+    }
+
+    public List<TournamentForPageModel> searchTournaments(TestRegModel model) {
+        List<TournamentForPageModel> tournamentForPageModels = new ArrayList<>();
+        Set<Tournament> tournaments = tournamentRepository.findByTournamentName_NameContainingIgnoreCase(model.getStr());
+        tournaments.forEach(tournament -> {
+            tournamentForPageModels.add(toModel(tournament));
+        });
+
+        Collections.sort(tournamentForPageModels, SortTournaments.SORT_BY_DATE);
+        return tournamentForPageModels;
+    }
+
+    public List<TournamentForPageModel> searchTournamentsGameName(TestRegModel model) {
+        List<TournamentForPageModel> tournamentForPageModels = new ArrayList<>();
+        Set<Tournament> tournaments = tournamentRepository.findByTournamentName_Game_NameContainingIgnoreCase(model.getStr());
+        tournaments.forEach(tournament -> {
+            tournamentForPageModels.add(toModel(tournament));
+        });
+
+        Collections.sort(tournamentForPageModels, SortTournaments.SORT_BY_DATE);
+        return tournamentForPageModels;
     }
 }

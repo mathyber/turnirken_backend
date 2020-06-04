@@ -34,12 +34,7 @@ public class UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.roleRepository = roleRepository;
     }
-/*
-    public String getGreeting() {
 
-        return "mahmade!";
-    }
-*/
     public AppUser create(CreateUserModel userModel) {
 
         AppUser appUser = new AppUser();

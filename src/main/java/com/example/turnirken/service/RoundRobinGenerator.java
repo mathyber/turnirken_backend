@@ -53,7 +53,7 @@ public class RoundRobinGenerator {
             match.setRound(rnd);
             match.setPlayer1(participants1.get(Idx).getParticipant());
             match.setPlayer2(participants.get(0).getParticipant());
-            if(!match.getPlayer1().getNameInTournament().equals("Fake") && !match.getPlayer2().getNameInTournament().equals("Fake") && match.getPlayer2() != match.getPlayer1())
+            if(participants1.get(Idx).getParticipant().getId()!=null && participants.get(0).getParticipant().getId()!=null && match.getPlayer2() != match.getPlayer1())
                 matchRepository.save(match);
 
             for (int idx = 1; idx < halfSize; idx++)
@@ -65,7 +65,7 @@ public class RoundRobinGenerator {
                 match1.setRound(rnd);
                 match1.setPlayer1(participants1.get(pl1).getParticipant());
                 match1.setPlayer2(participants1.get(pl2).getParticipant());
-                if(!match.getPlayer1().getNameInTournament().equals("Fake") && !match.getPlayer2().getNameInTournament().equals("Fake") && match.getPlayer2() != match.getPlayer1())
+                if(participants1.get(pl1).getParticipant().getId()!=null && participants1.get(pl2).getParticipant().getId()!=null && match.getPlayer2() != match.getPlayer1())
                     matchRepository.save(match1);
             }
         }

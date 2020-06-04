@@ -187,6 +187,16 @@ public class GroupService {
     }
 
     public void getGroupsPoints(GroupPointsModel model) {
+
+        if(model.isAllGroups()){
+            Set<TournamentGroup> groups = tournamentGroupRepository.findByTournament_Id(tournamentGroupRepository.findById((long)model.getIdGroup().intValue()).get().getTournament().getId());
+            groups.forEach(tournamentGroup -> {
+                tournamentGroup.setPointsDraw(model.getNumDraw());
+                tournamentGroup.setPointsWin(model.getNumWin());
+                tournamentGroupRepository.save(tournamentGroup);
+            });
+        }
+
         TournamentGroup group = tournamentGroupRepository.findById(model.getIdGroup()).get();
         if (!group.isFinish()) {
             group.setPointsWin(model.getNumWin());

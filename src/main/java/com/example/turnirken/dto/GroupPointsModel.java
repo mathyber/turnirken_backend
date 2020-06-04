@@ -10,4 +10,6 @@ public class GroupPointsModel {
     private Long idGroup;
     private int numWin;
     private int numDraw;
+    private boolean allGroups;
+
 }

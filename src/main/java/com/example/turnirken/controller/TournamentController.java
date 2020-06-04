@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -31,17 +30,15 @@ class TournamentController {
 
     @PostMapping("/saveTournamentGrid")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> create(@RequestBody SaveTourGridModel model) {
+    public ResponseEntity<?> saveTourGr(@RequestBody SaveTourGridModel model) {
 
-        if (tournamentService.tournamentGrid(model.getId())){
-            tournamentService.gridSave(model);
-            return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
-        } else
-            return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+            if(tournamentService.gridSave(model)) return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+            else return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+
     }
 
     @PostMapping("/getTournamentId")
-    public Optional<Tournament> getTourId(@RequestBody GetTourIdModel model) {
+    public TournamentForPageModel getTourId(@RequestBody GetTourIdModel model) {
         return tournamentService.getTourId((long) model.getId());
     }
 
@@ -86,8 +83,18 @@ class TournamentController {
             return new ResponseEntity<Error>(HttpStatus.CONFLICT);}
     }
 
+    @PostMapping("/searchTournaments")
+    public List<TournamentForPageModel> searchTournaments(@RequestBody TestRegModel model) {
+        return tournamentService.searchTournaments(model);
+    }
+
+    @PostMapping("/searchTournamentsNameGame")
+    public List<TournamentForPageModel> searchTournamentsNameGame(@RequestBody TestRegModel model) {
+        return tournamentService.searchTournamentsGameName(model);
+    }
+
     @GetMapping("/getTournaments")
-    public List<Tournament> getTour() {
+    public List<TournamentForPageModel> getTour() {
         return tournamentService.getTours();
     }
 }
