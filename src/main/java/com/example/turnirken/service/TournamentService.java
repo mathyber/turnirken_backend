@@ -87,6 +87,11 @@ public class TournamentService {
     }
 
     public TournamentForPageModel toModel(Tournament tournament){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String login = auth.getName();
+        AppUser user = userRepository.findByLogin(login);
+
         TournamentForPageModel tournamentForPageModel = new TournamentForPageModel();
         tournamentForPageModel.setId(tournament.getId());
         tournamentForPageModel.setTournamentName(tournament.getTournamentName().getName());
@@ -109,6 +114,9 @@ public class TournamentService {
         tournamentForPageModel.setGameName(tournament.getTournamentName().getGame().getName());
         tournamentForPageModel.setGrid(tournament.getGrid());
         tournamentForPageModel.setParticipants(tournamentParticipantRepository.findByTournament(tournament).size());
+
+        if(user!=null) tournamentForPageModel.setUserReg(tournamentParticipantRepository.findByUser_IdAndTournament_Id(user.getId(), tournament.getId())!=null);
+        else tournamentForPageModel.setUserReg(false);
         return tournamentForPageModel;
     }
 

@@ -45,4 +45,7 @@ public class TournamentForPageModel {
     private String logo;
 
     private String grid;
+
+    private boolean userReg;
+
 }

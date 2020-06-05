@@ -20,6 +20,7 @@ class SecurityConstants {
             "/api/login",
             "/api/tournaments/getTournaments",
             "/api/tournaments/searchTournaments",
+            "/api/tournaments/searchTournamentsNameGame",
             // other public endpoints of your API may be appended to this array
     };
 
