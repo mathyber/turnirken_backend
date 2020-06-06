@@ -80,6 +80,7 @@ class TournamentController {
         try {
             tournamentService.saveGroups(model.getGroups());
             tournamentService.saveMatches(model.getMatches());
+            tournamentService.setDateStart(model);
             return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<Error>(HttpStatus.CONFLICT);}

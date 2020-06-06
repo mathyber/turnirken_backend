@@ -72,7 +72,7 @@ public class TournamentService {
                 name.setGame(game);
         }
         else t.setTournamentName(name1);
- 
+
         t.setSeason(model.getSeason());
         t.setOrganizer(user);
         t.setLogo(model.getLogo());
@@ -183,10 +183,13 @@ public class TournamentService {
         Set<CreateEntityModel> cem = new HashSet<>();
 
         ArrayList<TournamentParticipant> tps = tournamentParticipantRepository.findByTournament(tournamentRepository.findById((long) model.getId()).get());
-        if(tps.size()!=model.getUsers().size()) {
+
+        if(model.getUsers()==null && model.getMatches()==null && model.getGroups()==null && model.getResults() == null) {
             tournamentRepository.save(tournament);
+            System.out.println("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
             return true;
         }
+
         int k=0;
         for(GridElemementModel gridElemementModel: model.getUsers()){
                 CreateEntityModel crmod = new CreateEntityModel();
@@ -360,7 +363,6 @@ public class TournamentService {
             groupService.createGroupMatches(tournamentGroup);
         });*/
         tournament.setDateFinishReg(new Date());
-        tournament.setDateStart(new Date());
         tournamentRepository.save(tournament);
         System.out.println("Creating DONE");
         return true;
@@ -593,5 +595,23 @@ public class TournamentService {
             t.add(tournamentForPageModels.get(i));
         }
         return t;
+    }
+
+    public void setDateStart(GroupMatchModel model) {
+        if(model.getMatches().size()!=0){
+            for(SaveGroupAndMatchesModel matchModel : model.getMatches()){
+                Tournament t = matchRepository.findById((long)matchModel.getId()).get().getPlayer1().getTournament();
+                t.setDateStart(new Date());
+                tournamentRepository.save(t);
+                return;
+            }
+        } else if(model.getGroups().size()!=0){
+            for(SaveGroupAndMatchesModel groupModel : model.getGroups()){
+                Tournament t = tournamentGroupRepository.findById((long)groupModel.getId()).get().getTournament();
+                t.setDateStart(new Date());
+                tournamentRepository.save(t);
+                return;
+            }
+        }
     }
 }
