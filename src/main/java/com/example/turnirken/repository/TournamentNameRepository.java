@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface TournamentNameRepository extends JpaRepository<TournamentName, Long> {
     TournamentName findByName(String name);
     TournamentName findByNameAndCreator(String name, AppUser user);
+    TournamentName findByNameAndCreatorAndAndGame_Name(String name, AppUser user, String nameg);
 }

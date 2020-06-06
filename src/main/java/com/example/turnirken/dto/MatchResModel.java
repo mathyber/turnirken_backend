@@ -3,7 +3,7 @@ package com.example.turnirken.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,4 +19,6 @@ public class MatchResModel {
     private int resPlayer1;
     private int resPlayer2;
     private boolean finish;
+    private List<MatchResForPageModel> story;
+
 }

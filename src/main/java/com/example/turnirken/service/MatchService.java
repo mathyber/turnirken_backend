@@ -50,6 +50,7 @@ public class MatchService {
             tm.setName(t.getTournamentName().getName());
             tm.setGame(t.getTournamentName().getGame().getName());
             tm.setSeason(t.getSeason());
+            tm.setIdOrg(t.getOrganizer().getId().intValue());
             matchResModel.setTournament(tm);
         }
         if (match.getPlayoff() != null) {
@@ -60,6 +61,7 @@ public class MatchService {
             tm.setName(t.getTournamentName().getName());
             tm.setGame(t.getTournamentName().getGame().getName());
             tm.setSeason(t.getSeason());
+            tm.setIdOrg(t.getOrganizer().getId().intValue());
             matchResModel.setTournament(tm);
         }
 
@@ -82,6 +84,29 @@ public class MatchService {
         matchResModel.setId(match.getId());
 
         ArrayList<MatchResult> resm = matchResultRepository.findByMatch_Id(match.getId());
+
+        if (resm.size() != 0) {
+            List<MatchResForPageModel> matchResForPageModels = new ArrayList<>();
+            for(MatchResult matchResult: resm){
+                MatchResForPageModel matchResForPageModel = new MatchResForPageModel();
+                matchResForPageModel.setId(matchResult.getId());
+                matchResForPageModel.setFinish(matchResult.isFinish());
+                matchResForPageModel.setInfo(matchResult.getInfo());
+                matchResForPageModel.setResPlayer1(matchResult.getResultPlayer1());
+                matchResForPageModel.setResPlayer2(matchResult.getResultPlayer2());
+                matchResForPageModel.setDate(matchResult.getDate());
+                if(matchResult.getResultCreator().getId().equals(matchResult.getMatch().getPlayer1().getUser().getId())) matchResForPageModel.setResCreator(1);
+                else {
+                    if (matchResult.getResultCreator().getId().equals(matchResult.getMatch().getPlayer2().getUser().getId()))
+                        matchResForPageModel.setResCreator(2);
+                    else matchResForPageModel.setResCreator(0);
+                }
+                matchResForPageModels.add(matchResForPageModel);
+            }
+
+            Collections.sort(matchResForPageModels, SortResultStory.SORT_BY_DATE);
+            matchResModel.setStory(matchResForPageModels);
+        }
 
         if (resm.size() != 0) {
             int r1p1 = 0, r2p1 = 0, r1p2 = 0, r2p2 = 0;
@@ -163,8 +188,9 @@ public class MatchService {
                             t.setDateFinish(new Date());
                             tournamentRepository.save(t);
                         } else {
-                            loser.setNameInTournament(next.getIdNext()+"место");
-                            tournamentParticipantRepository.save(loser);
+                            winner.setNameInTournament(next.getIdNext()+" место");
+                         //   System.out.println("DDDDDDDDDDDDDD"+next.getIdNext());
+                            tournamentParticipantRepository.save(winner);
                         }
                     }
                 } else {
@@ -184,14 +210,18 @@ public class MatchService {
                         }
                         matchRepository.save(m);
                     }
+                    if (next.getNextType().equals(nextTypeRepository.findByName("result"))) {
+
+                            loser.setNameInTournament(next.getIdNext()+" место");
+                            //   System.out.println("DDDDDDDDDDDDDD"+next.getIdNext());
+                            tournamentParticipantRepository.save(loser);
+
+                    }
                 }
             }
         }
     }
-
-
-
-
+    
     public void finishMatch(int id) {
         Match match = matchRepository.findById((long) id).get();
 

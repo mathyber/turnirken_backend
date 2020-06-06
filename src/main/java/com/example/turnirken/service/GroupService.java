@@ -75,7 +75,7 @@ public class GroupService {
                         tournamentRepository.save(t);
                     }else {
                         TournamentParticipant tournamentParticipant = tournamentParticipantRepository.findById(grm.getResults().get(next.getPlace()-1).getPart().getId()).get();
-                        tournamentParticipant.setNameInTournament(next.getIdNext()+"место");
+                        tournamentParticipant.setNameInTournament(next.getIdNext()+" место");
                         tournamentParticipantRepository.save(tournamentParticipant);
                     }
                 }//  gprm.getPart();

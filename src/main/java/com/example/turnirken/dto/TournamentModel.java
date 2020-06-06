@@ -11,6 +11,8 @@ public class TournamentModel {
 
     private int id;
 
+    private int idOrg;
+
     private String name;
 
     private String season;

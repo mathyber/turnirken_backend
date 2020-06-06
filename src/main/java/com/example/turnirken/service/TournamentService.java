@@ -53,7 +53,7 @@ public class TournamentService {
         String login = auth.getName();
         AppUser user = userRepository.findByLogin(login);
 
-        TournamentName name1 = tournamentNameRepository.findByNameAndCreator(model.getName(), user);
+        TournamentName name1 = tournamentNameRepository.findByNameAndCreatorAndAndGame_Name(model.getName(), user, model.getGame());
         Tournament t = new Tournament();
         if(name1==null){
             TournamentName name = new TournamentName();
@@ -173,7 +173,7 @@ public class TournamentService {
         AppUser user = userRepository.findByLogin(login);
 
         Tournament tournament = tournamentRepository.findById((long) model.getId()).get();
-        if (tournament.getOrganizer().getId() != user.getId()) return false;
+        if (!tournament.getOrganizer().getId().equals(user.getId())) return false;
 
        // tournament.setGrid("");
        // tournamentRepository.saveAndFlush(tournament);
@@ -186,12 +186,13 @@ public class TournamentService {
 
         if(model.getUsers()==null && model.getMatches()==null && model.getGroups()==null && model.getResults() == null) {
             tournamentRepository.save(tournament);
-            System.out.println("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
+         //   System.out.println("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
             return true;
         }
 
         int k=0;
         for(GridElemementModel gridElemementModel: model.getUsers()){
+                if(tps.size()<=k) break;
                 CreateEntityModel crmod = new CreateEntityModel();
                 crmod.setId(tps.get(k).getId());
                 crmod.setType(nextTypeRepository.findByName("user"));
@@ -254,8 +255,10 @@ public class TournamentService {
             CreateEntityModel crmod = new CreateEntityModel();
 
             int i = 0;
-            if (!gridElemementModel.getPlace().equals("Победитель турнира"))
-                i = Integer.parseInt(gridElemementModel.getPlace());
+            if (!gridElemementModel.getPlace().equals("Победитель турнира")) {
+                i = Integer.parseInt(gridElemementModel.getPlace().replaceAll("\\D", ""));
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA         " + i);
+            }
             else i = 1;
 
             crmod.setId((long) i);
