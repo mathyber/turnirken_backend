@@ -46,8 +46,10 @@ class TournamentController {
     public ResponseEntity<?> goParticipate(@RequestBody SaveTourGridModel model) {
 
         if (tournamentService.tournamentParticipant(model.getId())){
-            tournamentService.createParticipate(model.getId());
+            if (tournamentService.createParticipate(model.getId()))
             return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+            else return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+
         } else
             return new ResponseEntity<Error>(HttpStatus.CONFLICT);
     }
@@ -84,12 +86,12 @@ class TournamentController {
     }
 
     @PostMapping("/searchTournaments")
-    public List<TournamentForPageModel> searchTournaments(@RequestBody TestRegModel model) {
+    public List<TournamentForPageModel> searchTournaments(@RequestBody SearchTournamentsModel model) {
         return tournamentService.searchTournaments(model);
     }
 
     @PostMapping("/searchTournamentsNameGame")
-    public List<TournamentForPageModel> searchTournamentsNameGame(@RequestBody TestRegModel model) {
+    public List<TournamentForPageModel> searchTournamentsNameGame(@RequestBody SearchTournamentsModel model) {
         return tournamentService.searchTournamentsGameName(model);
     }
 

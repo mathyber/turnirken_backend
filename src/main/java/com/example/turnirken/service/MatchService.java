@@ -157,9 +157,14 @@ public class MatchService {
                     }
                     if (next.getNextType().equals(nextTypeRepository.findByName("result"))) {
                         if (next.getIdNext() == 1) {
+                            winner.setNameInTournament("Победитель");
+                            tournamentParticipantRepository.save(winner);
                             Tournament t = tournamentRepository.findById(match.getPlayer1().getTournament().getId()).get();
                             t.setDateFinish(new Date());
                             tournamentRepository.save(t);
+                        } else {
+                            loser.setNameInTournament(next.getIdNext()+"место");
+                            tournamentParticipantRepository.save(loser);
                         }
                     }
                 } else {

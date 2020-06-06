@@ -67,9 +67,16 @@ public class GroupService {
                 }
                 if (next.getNextType().equals(nextTypeRepository.findByName("result"))) {
                     if (next.getIdNext() == 1) {
+                        TournamentParticipant tournamentParticipant = tournamentParticipantRepository.findById(grm.getResults().get(next.getPlace()-1).getPart().getId()).get();
+                        tournamentParticipant.setNameInTournament("Победитель");
+                        tournamentParticipantRepository.save(tournamentParticipant);
                         Tournament t = group.getTournament();
                         t.setDateFinish(new Date());
                         tournamentRepository.save(t);
+                    }else {
+                        TournamentParticipant tournamentParticipant = tournamentParticipantRepository.findById(grm.getResults().get(next.getPlace()-1).getPart().getId()).get();
+                        tournamentParticipant.setNameInTournament(next.getIdNext()+"место");
+                        tournamentParticipantRepository.save(tournamentParticipant);
                     }
                 }//  gprm.getPart();
             }
@@ -170,6 +177,8 @@ public class GroupService {
         groupResModel.setGroupName(group.getName());
         groupResModel.setIdGroup(group.getId());
         groupResModel.setIdTour(group.getTournament().getId());
+        groupResModel.setNumWin(group.getPointsWin());
+        groupResModel.setNumDraw(group.getPointsDraw());
         if (finishGroup(group)) groupResModel.setFinish(true);
         return groupResModel;
     }

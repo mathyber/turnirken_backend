@@ -22,15 +22,15 @@ public class CreateTournamentModel {
 
     private boolean onlyAdminResult;
 
-    private int numToWin;
+  //  private int numToWin;
 
     private Date dateStartReg;
 
     private Date dateFinishReg;
 
-    private Date dateStart;
+  //  private Date dateStart;
 
-    private Date dateFinish;
+  //  private Date dateFinish;
 
     private String info;
 

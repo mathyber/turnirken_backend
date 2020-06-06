@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class GetParticipantsModel {
     private String login;
+    private String info;
     private Long user_id;
     private Long id;
 }

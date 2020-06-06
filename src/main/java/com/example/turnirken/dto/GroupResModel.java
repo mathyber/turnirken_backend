@@ -14,4 +14,6 @@ public class GroupResModel {
     private String groupName;
     private ArrayList<GroupPartResModel> results;
     private boolean finish;
+    private int numWin;
+    private int numDraw;
 }

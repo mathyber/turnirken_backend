@@ -4,9 +4,12 @@ import com.example.turnirken.entity.*;
 import com.example.turnirken.repository.MatchRepository;
 import com.example.turnirken.repository.RoundRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Set;
 
+@Transactional
 @Service
 public class RoundRobinGenerator {
 
@@ -25,6 +28,7 @@ public class RoundRobinGenerator {
         {
             TournamentParticipant tp = new TournamentParticipant();
             tp.setNameInTournament("Fake");
+            tp.setId((long)0);
             GroupParticipant gp = new GroupParticipant();
             participants.add(gp); // If odd number of teams add a dummy
         }
@@ -49,25 +53,40 @@ public class RoundRobinGenerator {
 
             int Idx = day % participantsSize;
 
-            Match match = new Match();
-            match.setRound(rnd);
-            match.setPlayer1(participants1.get(Idx).getParticipant());
-            match.setPlayer2(participants.get(0).getParticipant());
-            if(participants1.get(Idx).getParticipant().getId()!=null && participants.get(0).getParticipant().getId()!=null && match.getPlayer2() != match.getPlayer1())
+
+            if(participants1.get(Idx).getParticipant() != participants.get(0).getParticipant())
+            {
+                Match match = new Match();
+                match.setRound(rnd);
+                match.setPlayer1(participants1.get(Idx).getParticipant());
+                match.setPlayer2(participants.get(0).getParticipant());
                 matchRepository.save(match);
+            }
 
             for (int idx = 1; idx < halfSize; idx++)
             {
                 int pl1 = (day + idx) % participantsSize;
                 int pl2 = (day  + participantsSize - idx) % participantsSize;
 
-                Match match1 = new Match();
-                match1.setRound(rnd);
-                match1.setPlayer1(participants1.get(pl1).getParticipant());
-                match1.setPlayer2(participants1.get(pl2).getParticipant());
-                if(participants1.get(pl1).getParticipant().getId()!=null && participants1.get(pl2).getParticipant().getId()!=null && match.getPlayer2() != match.getPlayer1())
+
+                if(participants1.get(pl1).getParticipant()!=participants1.get(pl2).getParticipant()) {
+                    Match match1 = new Match();
+                    match1.setRound(rnd);
+                    match1.setPlayer1(participants1.get(pl1).getParticipant());
+                    match1.setPlayer2(participants1.get(pl2).getParticipant());
                     matchRepository.save(match1);
+                }
             }
         }
+
+if((participants.size()-1) % 2 != 0){
+    System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+    Set<Match> m = matchRepository.findByRound_Group_IdAndPlayer1Null(tg.getId());
+    Set<Match> m1 =matchRepository.findByRound_Group_IdAndPlayer2Null(tg.getId());
+    matchRepository.deleteAll(m);
+    matchRepository.deleteAll(m1);
+
+}
+
     }
 }

@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TestRegModel {
+public class SearchTournamentsModel {
+    private int page;
     private String str;
 }
