@@ -1,8 +1,6 @@
 package com.example.turnirken.controller;
 
-import com.example.turnirken.dto.CreateUserModel;
-import com.example.turnirken.dto.RoleModel;
-import com.example.turnirken.dto.TestRegModel;
+import com.example.turnirken.dto.*;
 import com.example.turnirken.entity.AppUser;
 import com.example.turnirken.service.UserService;
 import org.json.simple.JSONObject;
@@ -55,6 +53,11 @@ class UserController {
     @GetMapping("/getUserinfo")
     public JSONObject getUserinfo() {
         return userService.getUserinfo();
+    }
+
+    @PostMapping("/getProfile")
+    public ProfileModel getProlile(@RequestBody GetTourIdModel model) {
+        return userService.getProfile(model);
     }
 
 }

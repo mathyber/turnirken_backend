@@ -3,7 +3,6 @@ package com.example.turnirken.controller;
 import com.example.turnirken.dto.CreateResultMatchModel;
 import com.example.turnirken.dto.GetTourIdModel;
 import com.example.turnirken.dto.MatchResModel;
-import com.example.turnirken.dto.SaveTourGridModel;
 import com.example.turnirken.service.MatchService;
 import com.sun.net.httpserver.Authenticator;
 import org.springframework.http.HttpStatus;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -24,11 +24,6 @@ public class MatchController {
 
     public MatchController(MatchService matchService) {
         this.matchService = matchService;
-    }
-
-    @PostMapping("/getMatchesForUser")
-    public Set<MatchResModel> getMatchesForUser(@RequestBody GetTourIdModel model){
-        return matchService.getMatchesForUser(model.getId());
     }
 
     @PostMapping("/getAllMatchesTournament")

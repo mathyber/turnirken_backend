@@ -14,6 +14,7 @@ public interface TournamentParticipantRepository extends JpaRepository<Tournamen
     Optional<TournamentParticipant> findById(Long id);
     Set<TournamentParticipant> findByTournament_Id(Long tourId);
     ArrayList<TournamentParticipant> findByTournament(Tournament tour);
-    TournamentParticipant findByUser_Id(Long id);
+    Set<TournamentParticipant> findByUser_Id(Long id);
+    Set<TournamentParticipant> findByUser_IdAndNameInTournament(Long id, String name);
     TournamentParticipant findByUser_IdAndTournament_Id(Long id, Long t);
 }

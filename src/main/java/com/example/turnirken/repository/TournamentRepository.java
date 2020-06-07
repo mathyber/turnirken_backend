@@ -1,5 +1,6 @@
 package com.example.turnirken.repository;
 
+import com.example.turnirken.entity.AppUser;
 import com.example.turnirken.entity.Tournament;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,4 +14,5 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     Optional<Tournament> findById(Long id);
     Set<Tournament> findByTournamentName_NameContainingIgnoreCase(String name);
     Set<Tournament> findByTournamentName_Game_NameContainingIgnoreCase(String name);
+    Set<Tournament> findByOrganizer(AppUser user);
 }

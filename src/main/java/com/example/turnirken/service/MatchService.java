@@ -221,7 +221,7 @@ public class MatchService {
             }
         }
     }
-    
+
     public void finishMatch(int id) {
         Match match = matchRepository.findById((long) id).get();
 
@@ -344,12 +344,12 @@ public class MatchService {
         }
     }
 
-    public Set<MatchResModel> getMatchesForUser(int id) {
+    public List<MatchResModel> getMatchesForUser(AppUser ap) {
 
-        Set<MatchResModel> res = new HashSet<>();
+        List<MatchResModel> res = new ArrayList<>();
 
-        Set<Match> m1 = matchRepository.findByPlayer1_Id((long) id);
-        Set<Match> m2 = matchRepository.findByPlayer2_Id((long) id);
+        Set<Match> m1 = matchRepository.findByPlayer1_User(ap);
+        Set<Match> m2 = matchRepository.findByPlayer2_User(ap);
         Set<Match> ms = new HashSet<>();
         ms.addAll(m1);
         ms.addAll(m2);
