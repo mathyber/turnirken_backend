@@ -21,8 +21,9 @@ public class MatchService {
     private final TournamentParticipantRepository tournamentParticipantRepository;
     private final TournamentGroupRepository tournamentGroupRepository;
     private final GroupParticipantRepository groupParticipantRepository;
+    private final RoundRobinGenerator roundRobinGenerator;
 
-    public MatchService(MatchRepository matchRepository, MatchResultRepository matchResultRepository, UserRepository userRepository, NextRepository nextRepository, NextTypeRepository nextTypeRepository, TournamentRepository tournamentRepository, TournamentParticipantRepository tournamentParticipantRepository, TournamentGroupRepository tournamentGroupRepository, GroupParticipantRepository groupParticipantRepository) {
+    public MatchService(MatchRepository matchRepository, MatchResultRepository matchResultRepository, UserRepository userRepository, NextRepository nextRepository, NextTypeRepository nextTypeRepository, TournamentRepository tournamentRepository, TournamentParticipantRepository tournamentParticipantRepository, TournamentGroupRepository tournamentGroupRepository, GroupParticipantRepository groupParticipantRepository, RoundRobinGenerator roundRobinGenerator) {
 
      //   this.tournamentService = tournamentService;
         this.matchRepository = matchRepository;
@@ -34,6 +35,7 @@ public class MatchService {
         this.tournamentParticipantRepository = tournamentParticipantRepository;
         this.tournamentGroupRepository = tournamentGroupRepository;
         this.groupParticipantRepository = groupParticipantRepository;
+        this.roundRobinGenerator = roundRobinGenerator;
     }
 
     public MatchResModel getMatchResult(int id) {
@@ -170,6 +172,11 @@ public class MatchService {
                         gp.setParticipant(winner);
                         gp.setGroup(gr);
                         groupParticipantRepository.save(gp);
+                        if(gr.getNumberOfPlayers()==groupParticipantRepository.findByGroup(gr).size()){
+                            ArrayList<GroupParticipant> tp = groupParticipantRepository.findByGroup(gr);
+                            roundRobinGenerator.ListMatches(tp, gr);
+                        }
+
                     }
                     if (next.getNextType().equals(nextTypeRepository.findByName("match"))) {
                         Match m = matchRepository.findById((long) next.getIdNext()).get();

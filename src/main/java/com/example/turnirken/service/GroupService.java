@@ -36,11 +36,11 @@ public class GroupService {
     //    return gameRepository.save(game);
     //  }
 
+    //создание матчей для группы
     public void createGroupMatches(TournamentGroup group) {
         ArrayList<GroupParticipant> tp = groupParticipantRepository.findByGroup(group);
         roundRobinGenerator.ListMatches(tp, group);
     }
-
 
     public void nextStageForGroup(TournamentGroup group) {
         if (finishGroup(group)) {
@@ -55,6 +55,8 @@ public class GroupService {
                     gp.setParticipant(tp);
                     gp.setGroup(gr);
                     groupParticipantRepository.save(gp);
+                    if(gr.getNumberOfPlayers()==groupParticipantRepository.findByGroup(gr).size())
+                        createGroupMatches(gr);
                 }
                 if (next.getNextType().equals(nextTypeRepository.findByName("match"))) {
                     Match m = matchRepository.findById((long) next.getIdNext()).get();
@@ -82,7 +84,6 @@ public class GroupService {
             }
         }
     }
-
 
     public boolean finishGroup(TournamentGroup group) {
         if (group.isFinish()) return true;

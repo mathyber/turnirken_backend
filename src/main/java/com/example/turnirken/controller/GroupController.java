@@ -1,11 +1,9 @@
 package com.example.turnirken.controller;
 
 import com.example.turnirken.dto.*;
+import com.example.turnirken.repository.TournamentGroupRepository;
 import com.example.turnirken.service.GroupService;
 import com.example.turnirken.service.MatchService;
-import com.sun.net.httpserver.Authenticator;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +17,18 @@ public class GroupController {
 
     private final MatchService matchService;
     private final GroupService groupService;
+    private final TournamentGroupRepository tournamentGroupRepository;
 
-    public GroupController(MatchService matchService, GroupService groupService) {
+    public GroupController(MatchService matchService, GroupService groupService, TournamentGroupRepository tournamentGroupRepository) {
         this.matchService = matchService;
         this.groupService = groupService;
+        this.tournamentGroupRepository = tournamentGroupRepository;
     }
+/*
+    @PostMapping("/getGroupMatchesCreate")
+    public void createGroupMatches(@RequestBody GetTourIdModel model){
+        groupService.createGroupMatches(tournamentGroupRepository.findById((long)model.getId()).get());
+    }*/
 
     @PostMapping("/getGroupsTour")
     public Set<GroupResModel> getGroupsTour(@RequestBody GetTourIdModel model){
