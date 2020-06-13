@@ -31,11 +31,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: tournament_system_id
-                  type: bigint
-                  constraints:
-                    nullable: true
-              - column:
                   name: date_start_reg
                   type: datetime
                   constraints:
@@ -57,16 +52,6 @@ databaseChangeLog:
                     nullable: true
               - column:
                   name: max_participants
-                  type: bigint
-                  constraints:
-                    nullable: true
-              - column:
-                  name: games_num
-                  type: bigint
-                  constraints:
-                    nullable: true
-              - column:
-                  name: num_to_win
                   type: bigint
                   constraints:
                     nullable: true
@@ -95,3 +80,4 @@ databaseChangeLog:
                   type: text
                   constraints:
                     nullable: true
+

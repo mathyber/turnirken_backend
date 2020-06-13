@@ -20,11 +20,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: on_display
-                  type: bool
-                  constraints:
-                    nullable: false
-              - column:
                   name: id
                   type: bigint
                   autoIncrement: true

@@ -6,7 +6,7 @@ databaseChangeLog:
       changes:
 
         - createTable:
-            tableName: next_types
+            tableName: types
             columns:
               - column:
                   name: name
@@ -28,30 +28,30 @@ databaseChangeLog:
       comment: "Create types"
       changes:
         - insert:
-            tableName: next_types
+            tableName: types
             columns:
               - column:
                   name: name
                   value: "group"
         - insert:
-            tableName: next_types
+            tableName: types
             columns:
               - column:
                   name: name
                   value: "match"
         - insert:
-            tableName: next_types
+            tableName: types
             columns:
               - column:
                   name: name
                   value: "result"
         - insert:
-            tableName: next_types
+            tableName: types
             columns:
               - column:
                   name: name
                   value: "user"
       rollback:
         - delete:
-            tableName: next_types
+            tableName: types
             where: name in ('group', 'match', 'result','user')

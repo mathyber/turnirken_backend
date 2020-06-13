@@ -32,10 +32,6 @@ public class TournamentForPageModel {
 
     private int participants;
 
-    private int game;
-
-    private int numToWin;
-
     private boolean onlyAdminResult;
 
     private boolean status;

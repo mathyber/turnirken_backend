@@ -21,8 +21,8 @@ class UserController {
 
     @PostMapping("registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public AppUser create(@RequestBody CreateUserModel userModel) {
-        return userService.create(userModel);
+    public void create(@RequestBody CreateUserModel userModel) {
+        userService.create(userModel);
     }
 
     @PostMapping("registration/testLogin")

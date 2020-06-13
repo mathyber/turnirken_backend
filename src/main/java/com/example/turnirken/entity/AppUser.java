@@ -13,6 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "app_user")
 public class AppUser {
+
     @Column(name = "login")
     private String login;
 

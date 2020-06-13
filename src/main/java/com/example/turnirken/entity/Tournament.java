@@ -30,10 +30,6 @@ public class Tournament {
     @JoinColumn(name = "organizer_id", nullable = false)
     private AppUser organizer;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "tournament_system_id", nullable = false)
-    private TournamentSystem tournamentSystem;
-
     @Column(name = "date_start_reg")
     private Date dateStartReg;
 
@@ -48,12 +44,6 @@ public class Tournament {
 
     @Column(name = "max_participants")
     private int maxParticipants;
-
-    @Column(name = "games_num")
-    private int gamesNum;
-
-    @Column(name = "num_to_win")
-    private int numToWin;
 
     @Column(name = "only_admin_result")
     private boolean onlyAdminResult;

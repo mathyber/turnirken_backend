@@ -24,7 +24,7 @@ class GameController {
         Game game = new Game();
         game.setName(model.getName());
         game.setInfo(model.getInfo());
-        game.setOnDisplay(false);
+       // game.setOnDisplay(false);
 
         return gameService.create(game);
     }
@@ -35,7 +35,7 @@ class GameController {
         Game game = new Game();
         game.setName(model.getName());
         game.setInfo(model.getInfo());
-        game.setOnDisplay(true);
+        //game.setOnDisplay(true);
 
         return gameService.create(game);
     }
@@ -44,7 +44,7 @@ class GameController {
     @ResponseStatus(HttpStatus.CREATED)
     public Game setOnDisplay(@RequestBody CreateGameModel model) {
         Game game = gameRepository.findByName(model.getName());
-        game.setOnDisplay(true);
+      //  game.setOnDisplay(true);
         return gameService.create(game);
     }
 }

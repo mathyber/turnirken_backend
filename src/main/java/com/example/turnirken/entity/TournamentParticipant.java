@@ -24,7 +24,7 @@ public class TournamentParticipant {
     @JoinColumn(name = "user_id")
     private AppUser user;
 
-    @Column(name = "name_in_tournament")
+    @Column(name = "result")
     private String nameInTournament;
 
 }

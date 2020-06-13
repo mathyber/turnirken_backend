@@ -193,6 +193,7 @@ public class GroupService {
                 groupResModels.add(getGroup(tournamentGroup.getId().intValue()));
             }
         }
+
         return groupResModels;
     }
 

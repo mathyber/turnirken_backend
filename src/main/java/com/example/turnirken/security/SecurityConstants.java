@@ -1,7 +1,7 @@
 package com.example.turnirken.security;
 
 class SecurityConstants {
-    static final String SECRET = "SecretKeyToGenJWTs";
+    static final String SECRET = "vkodsdvjsfnjvdjkvnvgwurigh4hg49gh849hg94whgrhw4g459hw4g9ehgw49hg74whg84h5g8w4hgwog8wh749gohw4g95h4ow9egho94w8hg59w4hg95";
     static final long EXPIRATION_TIME = 864_000_000; // 10 days
     static final String TOKEN_PREFIX = "Bearer ";
     static final String HEADER_STRING = "Authorization";

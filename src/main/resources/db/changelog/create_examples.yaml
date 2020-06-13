@@ -1,0 +1,443 @@
+databaseChangeLog:
+
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  user_id
+            baseTableCatalogName:  5
+            baseTableName:  user_roles
+            baseTableSchemaName:  public
+            constraintName:  fk_user_roles_app_user
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  app_user
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-1
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  role_id
+            baseTableCatalogName:  5
+            baseTableName:  user_roles
+            baseTableSchemaName:  public
+            constraintName:  fk_user_roles_app_roles
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  app_roles
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-1111
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  tournament_id
+            baseTableCatalogName:  5
+            baseTableName:  tournament_participants
+            baseTableSchemaName:  public
+            constraintName:  fk_tournament_participants_tournaments
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  tournaments
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-6
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  user_id
+            baseTableCatalogName:  5
+            baseTableName:  tournament_participants
+            baseTableSchemaName:  public
+            constraintName:  fk_tournament_participants_app_user
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  app_user
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-4
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  name_id
+            baseTableCatalogName:  5
+            baseTableName:  tournaments
+            baseTableSchemaName:  public
+            constraintName:  fk_tournament_tournament_names
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  tournament_names
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-5
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  organizer_id
+            baseTableCatalogName:  5
+            baseTableName:  tournaments
+            baseTableSchemaName:  public
+            constraintName:  fk_tournament_app_user
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  app_user
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-2
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  creator_id
+            baseTableCatalogName:  5
+            baseTableName:  tournament_names
+            baseTableSchemaName:  public
+            constraintName:  fk_tournament_names_app_user
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  app_user
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-3
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  game_id
+            baseTableCatalogName:  5
+            baseTableName:  tournament_names
+            baseTableSchemaName:  public
+            constraintName:  fk_tournament_names_games
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  games
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-15
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  group_id
+            baseTableCatalogName:  5
+            baseTableName:  rounds
+            baseTableSchemaName:  public
+            constraintName:  fk_rounds_tournament_groups
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  tournament_groups
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-8
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  player_id
+            baseTableCatalogName:  5
+            baseTableName:  match_results
+            baseTableSchemaName:  public
+            constraintName:  fk_match_results_groups_app_user
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  app_user
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-9
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  match_id
+            baseTableCatalogName:  5
+            baseTableName:  match_results
+            baseTableSchemaName:  public
+            constraintName:  fk_match_results_groups_matches
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  matches
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-17
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  stage_id
+            baseTableCatalogName:  5
+            baseTableName:  playoffs
+            baseTableSchemaName:  public
+            constraintName:  fk_playoffs_stages
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  stages
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-16
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  tournament_id
+            baseTableCatalogName:  5
+            baseTableName:  playoffs
+            baseTableSchemaName:  public
+            constraintName:  fk_playoffs_tournaments
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  tournaments
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-2542572752
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  next_type
+            baseTableCatalogName:  5
+            baseTableName:  next
+            baseTableSchemaName:  public
+            constraintName:  fk_types_type
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  types
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-37537354
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  this_type
+            baseTableCatalogName:  5
+            baseTableName:  next
+            baseTableSchemaName:  public
+            constraintName:  fk_types1_type
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  types
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-11
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  player2
+            baseTableCatalogName:  5
+            baseTableName:  matches
+            baseTableSchemaName:  public
+            constraintName:  fk_matches_tournament1_participants
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  tournament_participants
+            referencedTableSchemaName:  public
+            validate:  true
+
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-13
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  playoff_id
+            baseTableCatalogName:  5
+            baseTableName:  matches
+            baseTableSchemaName:  public
+            constraintName:  fk_matches1_playoffs
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  playoffs
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-12
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  round_id
+            baseTableCatalogName:  5
+            baseTableName:  matches
+            baseTableSchemaName:  public
+            constraintName:  fk_matches_rounds
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  rounds
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-10
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  player1
+            baseTableCatalogName:  5
+            baseTableName:  matches
+            baseTableSchemaName:  public
+            constraintName:  fk_matches_tournament_participants
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  tournament_participants
+            referencedTableSchemaName:  public
+            validate:  true
+
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-65454
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  participant_id
+            baseTableCatalogName:  5
+            baseTableName:  group_participants
+            baseTableSchemaName:  public
+            constraintName:  fk_group_participants_tournament_participants
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  tournament_participants
+            referencedTableSchemaName:  public
+            validate:  true
+  - changeSet:
+      id:  addForeignKeyConstraint-example-666565
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  group_id
+            baseTableCatalogName:  5
+            baseTableName:  group_participants
+            baseTableSchemaName:  public
+            constraintName:  fk_group_participants_tournament_groups
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  tournament_groups
+            referencedTableSchemaName:  public
+            validate:  true
+
+  - changeSet:
+      id:  addForeignKeyConstraint-example-7
+      author:  mathyber
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames:  tournament_id
+            baseTableCatalogName:  5
+            baseTableName:  tournament_groups
+            baseTableSchemaName:  public
+            constraintName:  fk_tournament_groups_tournaments
+            deferrable:  true
+            initiallyDeferred:  true
+            onDelete:  CASCADE
+            onUpdate:  RESTRICT
+            referencedColumnNames:  id
+            referencedTableCatalogName:  5
+            referencedTableName:  tournaments
+            referencedTableSchemaName:  public
+            validate:  true

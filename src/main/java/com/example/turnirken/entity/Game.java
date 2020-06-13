@@ -15,9 +15,6 @@ public class Game {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "onDisplay")
-    private boolean onDisplay;
-
     @Column(name = "info")
     private String info;
 

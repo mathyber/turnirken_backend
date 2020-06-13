@@ -15,7 +15,7 @@ public class TournamentService {
     private TournamentRepository tournamentRepository;
     private GameRepository gameRepository;
     private UserRepository userRepository;
-    private TournamentSystemRepository tournamentSystemRepository;
+  //  private TournamentSystemRepository tournamentSystemRepository;
     private TournamentNameRepository tournamentNameRepository;
     private TournamentParticipantRepository tournamentParticipantRepository;
     private NextTypeRepository nextTypeRepository;
@@ -29,11 +29,11 @@ public class TournamentService {
     private GroupParticipantRepository groupParticipantRepository;
     private RoundRobinGenerator roundRobinGenerator;
 
-    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentSystemRepository tournamentSystemRepository, TournamentNameRepository tournamentNameRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService, MatchService matchService, GroupParticipantRepository groupParticipantRepository, RoundRobinGenerator roundRobinGenerator) {
+    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository, UserRepository userRepository, TournamentNameRepository tournamentNameRepository, TournamentParticipantRepository tournamentParticipantRepository, NextTypeRepository nextTypeRepository, TournamentGroupRepository tournamentGroupRepository, MatchRepository matchRepository, NextRepository nextRepository, StageRepository stageRepository, PlayoffRepository playoffRepository, GroupService groupService, MatchService matchService, GroupParticipantRepository groupParticipantRepository, RoundRobinGenerator roundRobinGenerator) {
         this.tournamentRepository = tournamentRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
-        this.tournamentSystemRepository = tournamentSystemRepository;
+      //  this.tournamentSystemRepository = tournamentSystemRepository;
         this.tournamentNameRepository = tournamentNameRepository;
         this.tournamentParticipantRepository = tournamentParticipantRepository;
         this.nextTypeRepository = nextTypeRepository;
@@ -64,7 +64,7 @@ public class TournamentService {
             if (game == null) {
                 Game game1 = new Game();
                 game1.setName(model.getGame());
-                game1.setOnDisplay(false);
+            //    game1.setOnDisplay(false);
                 game1.setInfo(model.getGame());
                 gameRepository.save(game1);
                 name.setGame(game1);
@@ -84,8 +84,8 @@ public class TournamentService {
         t.setOnlyAdminResult(model.isOnlyAdminResult());
         t.setInfo(model.getInfo());
         //zaglushki
-        TournamentSystem ts = tournamentSystemRepository.findById(1L).get();
-        t.setTournamentSystem(ts);
+      //  TournamentSystem ts = tournamentSystemRepository.findById(1L).get();
+     //   t.setTournamentSystem(ts);
 
         return tournamentRepository.save(t);
     }
@@ -109,8 +109,6 @@ public class TournamentService {
         tournamentForPageModel.setDateFinish(tournament.getDateFinish());
         tournamentForPageModel.setDateFinishReg(tournament.getDateFinishReg());
         tournamentForPageModel.setMaxParticipants(tournament.getMaxParticipants());
-        tournamentForPageModel.setGame(tournament.getGamesNum());
-        tournamentForPageModel.setNumToWin(tournament.getNumToWin());
         tournamentForPageModel.setOnlyAdminResult(tournament.isOnlyAdminResult());
         tournamentForPageModel.setStatus(tournament.isStatus());
         tournamentForPageModel.setInfo(tournament.getInfo());
@@ -166,8 +164,6 @@ public class TournamentService {
 
     public boolean gridSave(SaveTourGridModel model) {
 
-        //  try {
-        //  JSONObject json =
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String login = auth.getName();
         AppUser user = userRepository.findByLogin(login);
@@ -175,10 +171,7 @@ public class TournamentService {
         Tournament tournament = tournamentRepository.findById((long) model.getId()).get();
         if (!tournament.getOrganizer().getId().equals(user.getId())) return false;
 
-        // tournament.setGrid("");
-        // tournamentRepository.saveAndFlush(tournament);
         tournament.setGrid(model.getGrid());
-        //tournamentRepository.save(tournament);
 
         Set<CreateEntityModel> cem = new HashSet<>();
 
@@ -186,7 +179,6 @@ public class TournamentService {
 
         if (model.getUsers() == null && model.getMatches() == null && model.getGroups() == null && model.getResults() == null) {
             tournamentRepository.save(tournament);
-            //   System.out.println("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
             return true;
         }
 
@@ -396,7 +388,7 @@ public class TournamentService {
         });*/
         tournament.setDateFinishReg(new Date());
         tournamentRepository.save(tournament);
-        System.out.println("Creating DONE");
+      //  System.out.println("Creating DONE");
         return true;
 
     }

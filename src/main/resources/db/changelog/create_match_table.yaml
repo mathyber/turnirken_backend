@@ -39,14 +39,6 @@ databaseChangeLog:
                   name: player2
                   type: bigint
                   constraints:
-                    nullable:
-              - column:
-                  name: next_match_for_w
-                  type: bigint
-                  constraints:
                     nullable: true
-              - column:
-                  name: next_match_for_l
-                  type: bigint
-                  constraints:
-                    nullable: true
+
+

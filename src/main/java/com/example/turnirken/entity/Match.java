@@ -34,12 +34,4 @@ public class Match {
 
     @Column(name = "game_over")
     private boolean gameOverFlag;
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "next_match_for_w")
-    private Match nextForW;
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "next_match_for_l")
-    private Match nextForL;
 }

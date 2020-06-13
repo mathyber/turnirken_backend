@@ -9,7 +9,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "next_types")
+@Table(name = "types")
 public class NextType {
 
     @Column(name = "name")
