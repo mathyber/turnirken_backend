@@ -41,6 +41,19 @@ class TournamentController {
     public TournamentForPageModel getTourId(@RequestBody GetTourIdModel model) {
         return tournamentService.getTourId((long) model.getId());
     }
+/*
+    @GetMapping("/goParticipate/{id}")
+    public ResponseEntity<?> goParticipate(@PathVariable String id) {
+
+        if (tournamentService.tournamentParticipant(Integer.parseInt(id))){
+            if (tournamentService.createParticipate(Integer.parseInt(id)))
+                return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+            else return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+
+        } else
+            return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+    }
+    */
 
     @PostMapping("/goParticipate")
     public ResponseEntity<?> goParticipate(@RequestBody SaveTourGridModel model) {
@@ -99,5 +112,52 @@ class TournamentController {
     @GetMapping("/getTournaments")
     public List<TournamentForPageModel> getTour() {
         return tournamentService.getTours();
+    }
+
+    @DeleteMapping("/deleteTournament/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id){
+        try {
+            if (tournamentService.testDelete(Integer.parseInt(id))){
+                tournamentService.deleteTournament(Integer.parseInt(id));
+                return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+            } else new ResponseEntity<Error>(HttpStatus.FORBIDDEN);
+        } catch (Exception e){
+            return new ResponseEntity<Error>(HttpStatus.FORBIDDEN);}
+        return new ResponseEntity<Error>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @DeleteMapping("/deleteTournamentPart/{idPart}")
+    public ResponseEntity<?> deletePart(@PathVariable String idTournament, @PathVariable String idPart){
+        try {
+            if (tournamentService.testDeletePart(Integer.parseInt(idPart))){
+                tournamentService.deleteTournamentParticipant(Integer.parseInt(idPart));
+                return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+            } else new ResponseEntity<Error>(HttpStatus.FORBIDDEN);
+        } catch (Exception e){
+            return new ResponseEntity<Error>(HttpStatus.FORBIDDEN);}
+        return new ResponseEntity<Error>(HttpStatus.UNAUTHORIZED);
+    }
+
+    //костыли не для чужих глаз
+    @GetMapping("/deleteTournament/{id}")
+    public ResponseEntity<?> deleteget(@PathVariable String id){
+        try {
+            if (tournamentService.testDelete(Integer.parseInt(id))){
+                tournamentService.deleteTournament(Integer.parseInt(id));
+                return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+            } else new ResponseEntity<Error>(HttpStatus.FORBIDDEN);
+        } catch (Exception e){
+            return new ResponseEntity<Error>(HttpStatus.FORBIDDEN);}
+        return new ResponseEntity<Error>(HttpStatus.UNAUTHORIZED);
+    }
+    //костыли не для чужих глаз
+    @GetMapping("/deleteTournamentPart/{id}")
+    public ResponseEntity<?> deletePartget(@PathVariable String id){
+
+            if (tournamentService.testDeletePart(Integer.parseInt(id))){
+                tournamentService.deleteTournamentParticipant(Integer.parseInt(id));
+                return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+            } else new ResponseEntity<Error>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<Error>(HttpStatus.UNAUTHORIZED);
     }
 }

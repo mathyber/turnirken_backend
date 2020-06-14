@@ -57,17 +57,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
-            // parse the token.
             String user = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                     .build()
                     .verify(token.replace(TOKEN_PREFIX, ""))
                     .getSubject();
 
-
             List<GrantedAuthority> roles = new ArrayList<>();
-
-            AppUser userr = rep.findByLogin(user);
-            Set<Role> r = userr.getRoles();
+            AppUser appUser = rep.findByLogin(user);
+            Set<Role> r = appUser.getRoles();
             r.forEach(role -> roles.add(new SimpleGrantedAuthority(role.getName().name())));
 
             if (user != null) {

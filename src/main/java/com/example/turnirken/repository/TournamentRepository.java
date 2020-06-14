@@ -15,4 +15,5 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     Set<Tournament> findByTournamentName_NameContainingIgnoreCase(String name);
     Set<Tournament> findByTournamentName_Game_NameContainingIgnoreCase(String name);
     Set<Tournament> findByOrganizer(AppUser user);
+
 }

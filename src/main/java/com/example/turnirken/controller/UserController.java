@@ -36,8 +36,8 @@ class UserController {
     }
 
     @PostMapping("/setRole")
-    public AppUser setRole(@RequestBody RoleModel model) {
-        return userService.setRole(model);
+    public void setRole(@RequestBody RoleModel model) {
+        userService.setRole(model);
     }
 
     @GetMapping("/getUsername")

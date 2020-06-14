@@ -48,15 +48,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     .readValue(req.getInputStream(), AppUser.class);
 
             List<GrantedAuthority> roles = new ArrayList<>();
-
-         //   AppUser userr = rep.findByLogin(creds.getLogin());
             List<UserRole> r = urr.findByAppUser_Login(creds.getLogin());
-     //
             r.forEach(userrole -> roles.add(new SimpleGrantedAuthority(userrole.getRole().getName().name())));
-          //  Set<GrantedAuthority> roles = new HashSet<>();
-
-           // creds.getRoles().forEach(role -> roles.add(new SimpleGrantedAuthority(role.getName().name())));
-           // System.out.println(creds.getLogin()+ "             --------   " + r.get(0).getRole().getName().name());
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             creds.getLogin(),
@@ -78,7 +71,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withSubject(((User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
         res.setContentType("application/json");
         JSONObject jwtJson = new JSONObject();
         jwtJson.put("jwt", token);

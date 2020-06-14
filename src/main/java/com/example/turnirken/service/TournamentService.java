@@ -15,7 +15,7 @@ public class TournamentService {
     private TournamentRepository tournamentRepository;
     private GameRepository gameRepository;
     private UserRepository userRepository;
-  //  private TournamentSystemRepository tournamentSystemRepository;
+    //  private TournamentSystemRepository tournamentSystemRepository;
     private TournamentNameRepository tournamentNameRepository;
     private TournamentParticipantRepository tournamentParticipantRepository;
     private NextTypeRepository nextTypeRepository;
@@ -33,7 +33,7 @@ public class TournamentService {
         this.tournamentRepository = tournamentRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
-      //  this.tournamentSystemRepository = tournamentSystemRepository;
+        //  this.tournamentSystemRepository = tournamentSystemRepository;
         this.tournamentNameRepository = tournamentNameRepository;
         this.tournamentParticipantRepository = tournamentParticipantRepository;
         this.nextTypeRepository = nextTypeRepository;
@@ -53,7 +53,8 @@ public class TournamentService {
         String login = auth.getName();
         AppUser user = userRepository.findByLogin(login);
 
-        TournamentName name1 = tournamentNameRepository.findByNameAndCreatorAndAndGame_Name(model.getName(), user, model.getGame());
+        TournamentName name1 = tournamentNameRepository.findByNameAndCreatorAndAndGame_Name(
+                model.getName(), user, model.getGame());
         Tournament t = new Tournament();
         if (name1 == null) {
             TournamentName name = new TournamentName();
@@ -64,7 +65,6 @@ public class TournamentService {
             if (game == null) {
                 Game game1 = new Game();
                 game1.setName(model.getGame());
-            //    game1.setOnDisplay(false);
                 game1.setInfo(model.getGame());
                 gameRepository.save(game1);
                 name.setGame(game1);
@@ -84,8 +84,8 @@ public class TournamentService {
         t.setOnlyAdminResult(model.isOnlyAdminResult());
         t.setInfo(model.getInfo());
         //zaglushki
-      //  TournamentSystem ts = tournamentSystemRepository.findById(1L).get();
-     //   t.setTournamentSystem(ts);
+        //  TournamentSystem ts = tournamentSystemRepository.findById(1L).get();
+        //   t.setTournamentSystem(ts);
 
         return tournamentRepository.save(t);
     }
@@ -147,17 +147,12 @@ public class TournamentService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String login = auth.getName();
         AppUser user = userRepository.findByLogin(login);
-
-        //  Tournament tournament = tournamentRepository.findById((long)id ).get();
-
         Set<TournamentParticipant> tp = tournamentParticipantRepository.findByTournament_Id((long) id);
         AtomicInteger i = new AtomicInteger();
-
         for (TournamentParticipant tournamentParticipant : tp) {
             if (tournamentParticipant.getUser() != null)
                 if (tournamentParticipant.getUser().getId().equals(user.getId())) i.set(1);
         }
-
         return i.get() == 0;
     }
 
@@ -182,9 +177,7 @@ public class TournamentService {
             return true;
         }
 
-
         //проверка схемы на возможность создания турнира
-
         //=========================================================//
         if (model.getGroups().size() > 0) {
             for (GridElemementModel gridElemementModel : model.getGroups()) {
@@ -193,21 +186,20 @@ public class TournamentService {
             }
         }
 
-        if(model.getMatches().size()>0) {
+        if (model.getMatches().size() > 0) {
             for (GridElemementModel gridElemementModel : model.getMatches()) {
                 if (gridElemementModel.getLinksin().size() < 2) return false;
                 if (gridElemementModel.getLinksout().size() < 1) return false;
             }
         }
 
-        if(model.getUsers().size()>1) {
-        for (GridElemementModel gridElemementModel : model.getUsers()) {
-      //      if (gridElemementModel.getLinksin().size() > 0) return false;
-            if (gridElemementModel.getLinksout().size() > 1) return false;
-        }
+        if (model.getUsers().size() > 1) {
+            for (GridElemementModel gridElemementModel : model.getUsers()) {
+                if (gridElemementModel.getLinksout().size() > 1) return false;
+            }
         } else return false;
 
-        if(model.getResults().size()<1) return false;
+        if (model.getResults().size() < 1) return false;
 
         //=========================================================//
 
@@ -221,30 +213,22 @@ public class TournamentService {
             cem.add(crmod);
             k++;
         }
-        //   model.getUsers().forEach(gridElemementModel -> {
-
-        // TournamentParticipant tp = new TournamentParticipant();
-        //  tp.setTournament(tournament);
-        //  tp.setNameInTournament(gridElemementModel.getName());
-
-        //   CreateEntityModel crmod = new CreateEntityModel();
-        //   crmod.setId(tps.get());
-        //      crmod.setType(nextTypeRepository.findByName("user"));
-        //      crmod.setIdFromModel(gridElemementModel.getId());
-        //     cem.add(crmod);
-        //  });
 
         model.getGroups().forEach(gridElemementModel -> {
-            TournamentGroup tg = new TournamentGroup();
-            tg.setTournament(tournament);
-            tg.setName(gridElemementModel.getName());// setNameInTournament(gridElemementModel.getName());
+            TournamentGroup tg = new TournamentGroup(); //создаем экземпляр сущности группы
+            tg.setTournament(tournament); //добавляем в нее турнир
+            tg.setName(gridElemementModel.getName()); //добавляем название группы
             tg.setNumberOfPlayers(gridElemementModel.getLinksin().size());
+            //добавляем кол-во участников
             tg.setNumberOfPlayersPlayoff(gridElemementModel.getLinksout().size());
-            CreateEntityModel crmod = new CreateEntityModel();
-            crmod.setId(tournamentGroupRepository.save(tg).getId());
-            crmod.setType(nextTypeRepository.findByName("group"));
-            crmod.setIdFromModel(gridElemementModel.getId());
-            cem.add(crmod);
+            //добавляем кол-во выходящих из группы
+            CreateEntityModel crmod = new CreateEntityModel(); //создаем элемент модели соответствий
+            //id, полученных в запросе с id создаваемых соответствующих элементов
+            crmod.setId(tournamentGroupRepository.save(tg).getId()); //сохраняем в БД группу
+            //и устанавливаем в элемент модели соответствий id созданной группы
+            crmod.setType(nextTypeRepository.findByName("group")); //тип сущности - группа
+            crmod.setIdFromModel(gridElemementModel.getId()); //устанавливаем id из запроса
+            cem.add(crmod); //добавляем элемент модели соответствий в лист
         });
 
         model.getMatches().forEach(gridElemementModel -> {
@@ -254,7 +238,6 @@ public class TournamentService {
 
             Stage stage = new Stage();
             if (stageRepository.findByName(gridElemementModel.getStage()) == null) {
-                //  System.out.println("AAAAAAAAAAAAAAAAAA A");
                 stage.setName(gridElemementModel.getStage());
                 stageRepository.save(stage);
             } else {
@@ -263,7 +246,6 @@ public class TournamentService {
             playoff.setStage(stage);
             playoffRepository.save(playoff);
             m.setPlayoff(playoff);
-            //  m.setTournament(tournament);
             CreateEntityModel crmod = new CreateEntityModel();
             crmod.setId(matchRepository.save(m).getId());
             crmod.setType(nextTypeRepository.findByName("match"));
@@ -278,9 +260,7 @@ public class TournamentService {
             int i = 0;
             if (!gridElemementModel.getPlace().equals("Победитель турнира")) {
                 i = Integer.parseInt(gridElemementModel.getPlace().replaceAll("\\D", ""));
-                //   System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA         " + i);
             } else i = 1;
-
             crmod.setId((long) i);
             crmod.setType(nextTypeRepository.findByName("result"));
             crmod.setIdFromModel(gridElemementModel.getId());
@@ -288,34 +268,30 @@ public class TournamentService {
         });
 
         model.getGroups().forEach(gridElemementModel -> {
-
             final int[] i = new int[1];
             cem.forEach(createEntityModel -> {
-                if (createEntityModel.getIdFromModel().equals(gridElemementModel.getId()))
-                //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
-                {
+                if (createEntityModel.getIdFromModel()
+                        .equals(gridElemementModel.getId())) {
                     i[0] = createEntityModel.getId().intValue();
                 }
             });
-
             if (gridElemementModel.getLinksout().size() > 0)
-                gridElemementModel.getLinksout().forEach(gridElementLinkModel -> {
-                    Next next = new Next();
-                    next.setIdThis(i[0]);
-                    next.setThisType(nextTypeRepository.findByName("group"));
-                    next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
-
-
-                    cem.forEach(createEntityModel -> {
-                        if (createEntityModel.getIdFromModel().equals(gridElementLinkModel.getId()))
-                        //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
-                        {
-                            next.setIdNext(createEntityModel.getId().intValue());
-                        }
-                    });
-                    next.setPlace(gridElementLinkModel.getPlace());
-                    nextRepository.save(next);
-                });
+                gridElemementModel.getLinksout()
+                        .forEach(gridElementLinkModel -> {
+                            Next next = new Next();
+                            next.setIdThis(i[0]);
+                            next.setThisType(nextTypeRepository.findByName("group"));
+                            next.setNextType(nextTypeRepository.findByName(
+                                    gridElementLinkModel.getType()));
+                            cem.forEach(createEntityModel -> {
+                                if (createEntityModel.getIdFromModel().equals(
+                                        gridElementLinkModel.getId())) {
+                                    next.setIdNext(createEntityModel.getId().intValue());
+                                }
+                            });
+                            next.setPlace(gridElementLinkModel.getPlace());
+                            nextRepository.save(next);
+                        });
         });
 
         model.getMatches().forEach(gridElemementModel -> {
@@ -355,9 +331,7 @@ public class TournamentService {
 
             final int[] i = new int[1];
             cem.forEach(createEntityModel -> {
-                if (createEntityModel.getIdFromModel().equals(gridElemementModel.getId()))
-                //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
-                {
+                if (createEntityModel.getIdFromModel().equals(gridElemementModel.getId())) {
                     i[0] = createEntityModel.getId().intValue();
                 }
             });
@@ -370,25 +344,17 @@ public class TournamentService {
                     next.setNextType(nextTypeRepository.findByName(gridElementLinkModel.getType()));
 
                     cem.forEach(createEntityModel -> {
-                        if (createEntityModel.getIdFromModel().equals(gridElementLinkModel.getId()))
-                        //   next.setIdThis(tournamentGroupRepository.findById(createEntityModel.getId()));
-                        {
+                        if (createEntityModel.getIdFromModel().equals(gridElementLinkModel.getId())) {
                             next.setIdNext(createEntityModel.getId().intValue());
                         }
                     });
-                    // next.setPlace(gridElementLinkModel.getPlace());
                     nextRepository.save(next);
                 });
         });
 
 
-        /*
-        tournament.getGroups().forEach(tournamentGroup -> {
-            groupService.createGroupMatches(tournamentGroup);
-        });*/
         tournament.setDateFinishReg(new Date());
         tournamentRepository.save(tournament);
-      //  System.out.println("Creating DONE");
         return true;
 
     }
@@ -533,53 +499,79 @@ public class TournamentService {
     }
 
     public void saveGroups(Set<SaveGroupAndMatchesModel> groups) {
-        //   System.out.println("HELLOOOOOOOOOOOOOOO SAVE GROUP");
-
-        Set<Integer> ss = new HashSet<>();
+        Set<Integer> i = new HashSet<>();
         for (SaveGroupAndMatchesModel saveGroupAndMatchesModel : groups) {
-            ss.add(saveGroupAndMatchesModel.getId());
-            if (groupParticipantRepository.findByGroup(tournamentGroupRepository.findById((long) saveGroupAndMatchesModel.getId()).get()).size() < tournamentGroupRepository.findById((long) saveGroupAndMatchesModel.getId()).get().getNumberOfPlayers()) {
+            i.add(saveGroupAndMatchesModel.getId());
+            if (groupParticipantRepository.findByGroup(tournamentGroupRepository.findById(
+                    (long) saveGroupAndMatchesModel.getId()).get()).size() < tournamentGroupRepository.findById(
+                    (long) saveGroupAndMatchesModel.getId()).get().getNumberOfPlayers()) {
                 GroupParticipant groupParticipant = new GroupParticipant();
                 groupParticipant.setGroup(tournamentGroupRepository.findById((long) saveGroupAndMatchesModel.getId()).get());
-                groupParticipant.setParticipant(tournamentParticipantRepository.findById((long) saveGroupAndMatchesModel.getIdPart()).get());
-                if (groupParticipantRepository.findByGroup_IdAndParticipant_Id(groupParticipant.getId(), groupParticipant.getParticipant().getId()) == null)
+                groupParticipant.setParticipant(tournamentParticipantRepository.findById(
+                        (long) saveGroupAndMatchesModel.getIdPart()).get());
+                if (groupParticipantRepository.findByGroup_IdAndParticipant_Id(groupParticipant.getId(),
+                        groupParticipant.getParticipant().getId()) == null)
                     groupParticipantRepository.save(groupParticipant);
             }
-         /*   for ( GroupParticipant groupParticipant : groupParticipantRepository.findByGroup(tournamentGroupRepository.findById((long)saveGroupAndMatchesModel.getId()).get())){
-                if(groupParticipant.getParticipant()!=null) {
-                    groupParticipant.setGroup(tournamentGroupRepository.findById((long)saveGroupAndMatchesModel.getId()).get());
-                    groupParticipant.setParticipant(tournamentParticipantRepository.findById((long)saveGroupAndMatchesModel.getIdPart()).get());
-                    groupParticipantRepository.save(groupParticipant);
-                    return;*/
         }
-
-        for (Integer intr : ss) {
-            if (groupParticipantRepository.findByGroup(tournamentGroupRepository.findById((long) intr).get()).size() == tournamentGroupRepository.findById((long) intr).get().getNumberOfPlayers()) {
-                ArrayList<GroupParticipant> gps = groupParticipantRepository.findByGroup(tournamentGroupRepository.findById((long) intr).get());
+        for (Integer intr : i) {
+            if (groupParticipantRepository.findByGroup(tournamentGroupRepository.findById(
+                    (long) intr).get()).size() == tournamentGroupRepository.findById(
+                    (long) intr).get().getNumberOfPlayers()) {
+                ArrayList<GroupParticipant> gps = groupParticipantRepository.findByGroup(
+                        tournamentGroupRepository.findById((long) intr).get());
                 roundRobinGenerator.ListMatches(gps, tournamentGroupRepository.findById((long) intr).get());
             }
         }
-
     }
 
     public void saveMatches(Set<SaveGroupAndMatchesModel> matches) {
         for (SaveGroupAndMatchesModel saveGroupAndMatchesModel : matches) {
-            Match m = matchRepository.findById((long) saveGroupAndMatchesModel.getId()).get();
-            if (m.getPlayer1() == null && m.getPlayer2() == null) {
-                m.setPlayer1(tournamentParticipantRepository.findById((long) saveGroupAndMatchesModel.getIdPart()).get());
+            Match m = matchRepository.findById(
+                    (long) saveGroupAndMatchesModel.getId()).get(); //находим матч по указанному id
+            if (m.getPlayer1() == null || m.getPlayer2() == null) { //проверяем, есть ли вакантные места в матче
+                if (m.getPlayer1() == null) { //если вакантно место первого участника матча
+                    if (m.getPlayer2().getUser().getId().intValue()
+                            != saveGroupAndMatchesModel.getIdPart()) //проверяем, не сохранен ли сохраняемый
+                        // участник как второй участник матча
+                        m.setPlayer1(tournamentParticipantRepository.findById(  //если нет - устанавливаем его
+                                (long) saveGroupAndMatchesModel.getIdPart()).get());
+                } else if (m.getPlayer2() == null) { //если вакантно место второго участника матча
+                    if (m.getPlayer1().getUser().getId().intValue()
+                            != saveGroupAndMatchesModel.getIdPart()) //проверяем, не сохранен ли сохраняемый
+                        // участник как первый участник матча
+                        m.setPlayer2(tournamentParticipantRepository.findById( //если нет - устанавливаем его
+                                (long) saveGroupAndMatchesModel.getIdPart()).get());
+                }
+                matchRepository.save(m); //сохранение изменений в матче
+            }
+
+        }
+    }
+
+
+    /*
+    public void saveMatches(Set<SaveGroupAndMatchesModel> matches) {
+        for (SaveGroupAndMatchesModel saveGroupAndMatchesModel : matches) {
+            Match m = matchRepository.findById((long) saveGroupAndMatchesModel.getId()).get(); //находим матч по указанному id
+            if (m.getPlayer1() == null && m.getPlayer2() == null) { //проверяем, не пустые ли оба места в матче
+                m.setPlayer1(tournamentParticipantRepository.findById(
+                        (long) saveGroupAndMatchesModel.getIdPart()).get());
             } else if (m.getPlayer1() == null || m.getPlayer2() == null) {
                 if (m.getPlayer1() == null) {
                     if (m.getPlayer2().getUser().getId().intValue() != saveGroupAndMatchesModel.getIdPart())
-                        m.setPlayer1(tournamentParticipantRepository.findById((long) saveGroupAndMatchesModel.getIdPart()).get());
+                        m.setPlayer1(tournamentParticipantRepository.findById(
+                                (long) saveGroupAndMatchesModel.getIdPart()).get());
                 }
                 if (m.getPlayer2() == null) {
                     if (m.getPlayer1().getUser().getId().intValue() != saveGroupAndMatchesModel.getIdPart())
-                        m.setPlayer2(tournamentParticipantRepository.findById((long) saveGroupAndMatchesModel.getIdPart()).get());
+                        m.setPlayer2(tournamentParticipantRepository.findById(
+                                (long) saveGroupAndMatchesModel.getIdPart()).get());
                 }
             }
             matchRepository.save(m);
         }
-    }
+    }*/
 
     public List<TournamentForPageModel> searchTournaments(SearchTournamentsModel model) {
 
@@ -635,4 +627,47 @@ public class TournamentService {
             }
         }
     }
+
+    //проверка на право удалять турнир
+    public boolean testDelete(int id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String login = auth.getName();
+        AppUser user = userRepository.findByLogin(login);
+
+        Tournament tournament = tournamentRepository.findById((long)id).get();
+
+        if(user.getId().equals(tournament.getOrganizer().getId()) && tournament.getDateFinish()==null) return true;
+
+        for(Role role : user.getRoles()){
+            if(role.getName().name().equals("ROLE_ADMIN") || role.getName().name().equals("ROLE_MODERATOR")) return true;
+        }
+        return false;
+    }
+
+    //удаление турнира
+    public void deleteTournament(int id) {
+        Tournament tournament = tournamentRepository.findById((long)id).get();
+        tournamentRepository.delete(tournament);
+    }
+
+    //проверка на право удалять участника из турнира
+    public boolean testDeletePart(int idPart) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String login = auth.getName();
+        AppUser user = userRepository.findByLogin(login);
+
+        TournamentParticipant tournamentParticipant = tournamentParticipantRepository.findById((long)idPart).get();
+        Tournament tournament = tournamentRepository.findById(tournamentParticipant.getTournament().getId()).get();
+ //       System.out.println("dfghjkdfghjsdfghsdfghj ---------- "+tournamentParticipant.getUser().getId());
+        if(user.getId().equals(tournament.getOrganizer().getId()) && tournament.getDateFinish()==null) return true;
+        if(user.getId().equals(tournamentParticipant.getUser().getId()) && tournament.getDateStart()==null) return true;
+        return false;
+    }
+
+    //удаление участника из турнира
+    public void deleteTournamentParticipant(int idPart) {
+        TournamentParticipant tournamentParticipant = tournamentParticipantRepository.findById((long)idPart).get();
+        tournamentParticipantRepository.delete(tournamentParticipant);
+    }
+
 }

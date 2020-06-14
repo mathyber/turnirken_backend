@@ -5,9 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RoleModel {
+public class DeletePartModel {
 
-    private Long id;
-
-    private String role;
+    private int idPart;
+    private int idTournament;
 }

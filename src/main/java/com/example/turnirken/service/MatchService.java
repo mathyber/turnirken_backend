@@ -220,7 +220,6 @@ public class MatchService {
                     if (next.getNextType().equals(nextTypeRepository.findByName("result"))) {
 
                             loser.setNameInTournament(next.getIdNext()+" место");
-                            //   System.out.println("DDDDDDDDDDDDDD"+next.getIdNext());
                             tournamentParticipantRepository.save(loser);
 
                     }
@@ -231,7 +230,6 @@ public class MatchService {
 
     public void finishMatch(int id) {
         Match match = matchRepository.findById((long) id).get();
-
         ArrayList<MatchResult> resadm = new ArrayList<>();
         if (match.getPlayoff() != null) {
             resadm = matchResultRepository.findByMatch_IdAndResultCreator(match.getId(), match.getPlayoff().getTournament().getOrganizer());
@@ -239,9 +237,7 @@ public class MatchService {
         if (match.getRound() != null) {
             resadm = matchResultRepository.findByMatch_IdAndResultCreator(match.getId(), match.getRound().getGroup().getTournament().getOrganizer());
         }
-
         if (resadm.size() != 0) {
-
             MatchResult ma = resadm.get(0);
             Date dta = resadm.get(0).getDate();
             for (MatchResult matchResult : resadm) {
@@ -258,10 +254,8 @@ public class MatchService {
                 return;
             }
         }
-
         ArrayList<MatchResult> resm = matchResultRepository.findByMatch_IdAndResultCreator(match.getId(), match.getPlayer1().getUser());
         ArrayList<MatchResult> resm1 = matchResultRepository.findByMatch_IdAndResultCreator(match.getId(), match.getPlayer2().getUser());
-
         if (resm.size() != 0 && resm1.size() != 0) {
 
             MatchResult m = resm.get(0);
@@ -271,7 +265,6 @@ public class MatchService {
                     m = matchResult;
                 }
             }
-
             MatchResult m1 = resm1.get(0);
             Date dt1 = resm1.get(0).getDate();
             for (MatchResult matchResult : resm1) {
@@ -279,10 +272,8 @@ public class MatchService {
                     m1 = matchResult;
                 }
             }
-
             if (m.getResultPlayer1() == m1.getResultPlayer1() && m.getResultPlayer2() == m1.getResultPlayer2() && m.isFinish() && m1.isFinish()) {
                 match.setGameOverFlag(true);
-              //  if (match.getRound() != null) tournamentService.nextStageForGroup(match.getRound().getGroup());
                 nextStageForMatch(match);
             }
             matchRepository.save(match);
@@ -290,28 +281,25 @@ public class MatchService {
     }
 
 
-    public boolean creatorResult(int id) {
+    public AppUser getThisAuthUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String login = auth.getName();
-        AppUser user = userRepository.findByLogin(login);
+        return userRepository.findByLogin(login);
+    }
 
-        Match match = matchRepository.findById((long) id).get();
-        if (match.isGameOverFlag()) return false;
-
-        if (match.getPlayoff() != null) {
-            if (match.getPlayoff().getTournament().getOrganizer() == user) return true;
-            else if (match.getPlayoff().getTournament().isOnlyAdminResult()) return false;
-        }
-        if (match.getRound() != null) {
-            if (match.getRound().getGroup().getTournament().getOrganizer() == user) return true;
-            else if (match.getRound().getGroup().getTournament().isOnlyAdminResult()) return false;
-        }
+    public boolean creatorResult(int id) { //проверка, имеет ли право менять счет пользователь
+        AppUser user = getThisAuthUser(); //получаем текущего пользователя
+        Match match = matchRepository.findById((long) id).get(); //получаем матч по id
+        if (match.isGameOverFlag()) //если матч завершен - счет менять нельзя
+            return false;
+        if (match.getPlayer1().getTournament().getOrganizer() == user) //если тек.пользователь
+            return true;                    // является организатором - разрешаем
+        else if (match.getPlayer1().getTournament().isOnlyAdminResult())
+            return false;  //иначе если в турнире только организатор ставит счет, то запрещаем
         if (match.getPlayer1().getUser() == user || match.getPlayer2().getUser() == user) {
-            return true;
+            return true; //если пользователь - участник матча, разрешаем
         }
-
         return false;
-
     }
 
     public boolean setResultMatch(CreateResultMatchModel m) {
