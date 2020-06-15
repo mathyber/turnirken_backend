@@ -524,7 +524,7 @@ public class TournamentService {
             }
         }
     }
-
+/*
     public void saveMatches(Set<SaveGroupAndMatchesModel> matches) {
         for (SaveGroupAndMatchesModel saveGroupAndMatchesModel : matches) {
             Match m = matchRepository.findById(
@@ -546,6 +546,25 @@ public class TournamentService {
                 matchRepository.save(m); //сохранение изменений в матче
             }
 
+        }
+    }*/
+
+    public void saveMatches(Set<SaveGroupAndMatchesModel> matches) {
+        for (SaveGroupAndMatchesModel saveGroupAndMatchesModel : matches) {
+            Match m = matchRepository.findById((long) saveGroupAndMatchesModel.getId()).get();
+            if (m.getPlayer1() == null && m.getPlayer2() == null) {
+                m.setPlayer1(tournamentParticipantRepository.findById((long) saveGroupAndMatchesModel.getIdPart()).get());
+            } else if (m.getPlayer1() == null || m.getPlayer2() == null) {
+                if (m.getPlayer1() == null) {
+                    if (m.getPlayer2().getUser().getId().intValue() != saveGroupAndMatchesModel.getIdPart())
+                        m.setPlayer1(tournamentParticipantRepository.findById((long) saveGroupAndMatchesModel.getIdPart()).get());
+                }
+                if (m.getPlayer2() == null) {
+                    if (m.getPlayer1().getUser().getId().intValue() != saveGroupAndMatchesModel.getIdPart())
+                        m.setPlayer2(tournamentParticipantRepository.findById((long) saveGroupAndMatchesModel.getIdPart()).get());
+                }
+            }
+            matchRepository.save(m);
         }
     }
 
