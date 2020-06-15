@@ -94,7 +94,8 @@ public class UserService {
                 if (rol.getName().name().equals(model.getRole())) {
                     roles.remove(rol);
                     break;
-                };
+                }
+                ;
             }
         else roles.add(role.get());
         user.setRoles(roles);
@@ -146,5 +147,32 @@ public class UserService {
         profileModel.setTournaments(tournamentForPageModels.subList(0, i));
 
         return profileModel;
+    }
+
+    public boolean newPassword(NewPasswordModel model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String login = auth.getName();
+        AppUser user = userRepository.findByLogin(login);
+
+        AppUser appUser = userRepository.findByLogin(model.getLogin());
+        if (user.getLogin().equals(appUser.getLogin())) {
+            if (bCryptPasswordEncoder.matches(model.getPassword(), appUser.getPassword())) {
+                appUser.setPassword(bCryptPasswordEncoder.encode(model.getPasswordNew()));
+                userRepository.save(appUser);
+                return true;
+            } else return false;
+        } else return false;
+    }
+
+    public boolean newEmail(NewEmailModel model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String login = auth.getName();
+        AppUser user = userRepository.findByLogin(login);
+
+        if (user != null) {
+            user.setEmail(model.getEmail());
+            userRepository.save(user);
+            return true;
+        } else return false;
     }
 }

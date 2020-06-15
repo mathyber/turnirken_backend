@@ -3,8 +3,10 @@ package com.example.turnirken.controller;
 import com.example.turnirken.dto.*;
 import com.example.turnirken.entity.AppUser;
 import com.example.turnirken.service.UserService;
+import com.sun.net.httpserver.Authenticator;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,20 @@ class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody CreateUserModel userModel) {
         userService.create(userModel);
+    }
+
+    @PostMapping("newPassword")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> create(@RequestBody NewPasswordModel model) {
+        if(userService.newPassword(model)) return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+        else return new ResponseEntity<Error>(HttpStatus.FORBIDDEN);
+    }
+
+    @PostMapping("newEmail")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> create(@RequestBody NewEmailModel model) {
+        if(userService.newEmail(model)) return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+        else return new ResponseEntity<Error>(HttpStatus.FORBIDDEN);
     }
 
     @PostMapping("registration/testLogin")
