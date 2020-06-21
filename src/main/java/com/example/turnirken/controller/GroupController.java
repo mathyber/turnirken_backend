@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("api/groups")
@@ -31,7 +31,7 @@ public class GroupController {
     }*/
 
     @PostMapping("/getGroupsTour")
-    public Set<GroupResModel> getGroupsTour(@RequestBody GetTourIdModel model){
+    public ArrayList<GroupResModel> getGroupsTour(@RequestBody GetTourIdModel model){
         return groupService.getGroupsTour(model.getId());
     }
 

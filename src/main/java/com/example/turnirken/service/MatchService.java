@@ -358,9 +358,55 @@ public class MatchService {
 
     }
 
-    public Set<MatchResModel> getAllMatchesTournament(int id) {
 
-        Set<MatchResModel> res = new HashSet<>();
+    public ArrayList<MatchResModel> getAllMatchesTournament(int id) {
+
+        ArrayList<MatchResModel> res = new ArrayList<>();
+
+        Set<Match> m1 = matchRepository.findByPlayoff_Tournament_Id((long) id);
+
+        ArrayList<MatchResModel> res1 = new ArrayList<>();
+        for (Match match : m1) {
+            MatchResModel mr = getMatchResult(match.getId().intValue());
+            res1.add(mr);
+        }
+        Collections.sort(res1, SortMatches.SORT_BY_PFSTAGE);
+
+        Set<Match> m2 = matchRepository.findByRound_Group_Tournament_Id((long) id);
+
+        ArrayList<MatchResModel> res2 = new ArrayList<>();
+        for (Match match : m2) {
+            MatchResModel mr = getMatchResult(match.getId().intValue());
+            res2.add(mr);
+        }
+
+        Collections.sort(res2, SortMatches.SORT_BY_GROUP);
+
+        ArrayList<MatchResModel> finale = new ArrayList<>();
+
+        for(int i=0; i<res1.size(); i++){
+            if(res1.get(i).getPlayoffStage().equals("Финал")||res1.get(i).getPlayoffStage().equals("Прочее")) {
+                {
+                    finale.add(res1.get(i));
+                    res1.remove(i);
+                }
+            }
+        }
+
+        Collections.sort(finale, SortMatches.SORT_BY_GROUP);
+
+        res.addAll(finale);
+        res.addAll(res1);
+        res.addAll(res2);
+
+        return res;
+
+    }
+
+    /*
+    public ArrayList<MatchResModel> getAllMatchesTournament(int id) {
+
+        ArrayList<MatchResModel> res = new ArrayList<>();
 
         Set<Match> m1 = matchRepository.findByPlayoff_Tournament_Id((long) id);
         Set<Match> m2 = matchRepository.findByRound_Group_Tournament_Id((long) id);
@@ -374,9 +420,10 @@ public class MatchService {
             res.add(mr);
         }
 
+        Collections.sort(res, SortMatches.SORT_BY_ID);
         return res;
 
-    }
+    }*/
 
     public ArrayList<MatchResModel> getMatchesGroup(int id) {
         ArrayList<MatchResModel> res = new ArrayList<>();

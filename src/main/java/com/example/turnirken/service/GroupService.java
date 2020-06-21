@@ -185,14 +185,16 @@ public class GroupService {
     }
 
     //вернуть резы всех групп турнира
-    public Set<GroupResModel> getGroupsTour(int id) {
+    public ArrayList<GroupResModel> getGroupsTour(int id) {
         Set<TournamentGroup> grs = tournamentGroupRepository.findByTournament_Id((long) id);
-        Set<GroupResModel> groupResModels = new HashSet<>();
+        ArrayList<GroupResModel> groupResModels = new ArrayList<>();
         if (grs.size() != 0) {
             for (TournamentGroup tournamentGroup : grs) {
                 groupResModels.add(getGroup(tournamentGroup.getId().intValue()));
             }
         }
+
+        Collections.sort(groupResModels, SortGroup.SORT_BY_NAME);
 
         return groupResModels;
     }

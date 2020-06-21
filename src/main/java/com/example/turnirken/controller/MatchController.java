@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("api/matches")
@@ -24,7 +22,7 @@ public class MatchController {
     }
 
     @GetMapping("/getAllMatchesTournament/{id}")
-    public Set<MatchResModel> getAllMatchesTournament(@PathVariable String id){
+    public ArrayList<MatchResModel> getAllMatchesTournament(@PathVariable String id){
         return matchService.getAllMatchesTournament(Integer.parseInt(id));
     }
 
