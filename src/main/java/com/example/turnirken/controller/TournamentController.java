@@ -55,7 +55,7 @@ class TournamentController {
     }
     */
 
-    @PostMapping("/goParticipate")
+    @PostMapping("/createParticipate")
     public ResponseEntity<?> goParticipate(@RequestBody SaveTourGridModel model) {
 
         if (tournamentService.tournamentParticipant(model.getId())){
@@ -88,7 +88,7 @@ class TournamentController {
        // return tournamentService.getMatches(model.getId(),false);
     }
 
-    @PostMapping("/setMatchesAndGroups")
+    @PostMapping("/setStartPositions")
     public ResponseEntity<?> getMatchesAndGroups(@RequestBody GroupMatchModel model){
         try {
             tournamentService.saveGroups(model.getGroups());
